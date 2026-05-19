@@ -1,0 +1,3407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Livestream & Social Commerce 2026 — Megsu</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f2ec;
+    --orange: #E8502A;
+    --orange-light: #ff6b42;
+    --gray: #1a1a1a;
+    --gray-mid: #2e2e2e;
+    --gray-light: #888;
+    --cream: #f0ece3;
+    --accent-yellow: #f5c842;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Space Grotesk', sans-serif;
+    overflow: hidden;
+    cursor: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--orange);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s;
+    mix-blend-mode: exclusion;
+  }
+
+  /* SLIDES CONTAINER */
+  .deck {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    transform: scale(0.97) translateY(12px);
+    filter: blur(2px);
+  }
+
+  .slide.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+
+  /* STAGGERED ENTRANCE ANIMATIONS */
+  .slide.active .anim-in {
+    animation: slideIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .slide.active .anim-in:nth-child(1) { animation-delay: 0.1s; }
+  .slide.active .anim-in:nth-child(2) { animation-delay: 0.2s; }
+  .slide.active .anim-in:nth-child(3) { animation-delay: 0.3s; }
+  .slide.active .anim-in:nth-child(4) { animation-delay: 0.4s; }
+  .slide.active .anim-in:nth-child(5) { animation-delay: 0.5s; }
+  .slide.active .anim-in:nth-child(6) { animation-delay: 0.6s; }
+
+  .anim-in {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  @keyframes slideIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* GLOW PULSE */
+  @keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(232, 80, 42, 0); }
+    50% { box-shadow: 0 0 30px rgba(232, 80, 42, 0.15); }
+  }
+
+  /* AMBIENT PARTICLES */
+  .particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--orange);
+    border-radius: 50%;
+    opacity: 0;
+    animation: particleFloat linear infinite;
+  }
+  @keyframes particleFloat {
+    0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10% { opacity: 0.3; }
+    90% { opacity: 0.1; }
+    100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
+  }
+
+  /* NAV */
+  .nav {
+    position: fixed;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: rgba(10,10,10,0.85);
+    border: 1px solid var(--gray-mid);
+    padding: 12px 24px;
+    backdrop-filter: blur(12px);
+  }
+
+  .nav button {
+    background: none;
+    border: none;
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 4px 12px;
+    transition: color 0.2s;
+  }
+
+  .nav button:hover { color: var(--orange); }
+
+  .nav-counter {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--gray-light);
+    min-width: 60px;
+    text-align: center;
+  }
+
+  .nav-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .nav-dot {
+    width: 4px; height: 4px;
+    background: var(--gray-mid);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .nav-dot.active {
+    background: var(--orange);
+    width: 20px;
+    border-radius: 2px;
+  }
+
+  /* SLIDE LABEL */
+  .slide-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gray-light);
+  }
+
+  .slide-label.orange { color: var(--orange); }
+
+  /* TYPOGRAPHY */
+  .display {
+    font-family: 'Bebas Neue', sans-serif;
+    line-height: 0.9;
+    letter-spacing: 1px;
+  }
+
+  .mono {
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ==================== SLIDE 0 — COVER ==================== */
+  .s0 {
+    background: var(--black);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+  }
+
+  .s0-left {
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid var(--gray-mid);
+  }
+
+  .s0-right {
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 39px,
+      var(--gray-mid) 39px,
+      var(--gray-mid) 40px
+    );
+  }
+
+  .s0-headline {
+    font-size: clamp(80px, 10vw, 140px);
+    color: var(--white);
+  }
+
+  .s0-headline span {
+    color: var(--orange);
+    display: block;
+  }
+
+  .s0-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--gray-mid);
+    border-top: 1px solid var(--gray-mid);
+    margin-top: auto;
+  }
+
+  .s0-meta-item {
+    background: var(--black);
+    padding: 20px;
+  }
+
+  .s0-meta-item .val {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--orange);
+    margin-bottom: 4px;
+  }
+
+  .s0-meta-item .label {
+    font-size: 11px;
+    color: var(--gray-light);
+    letter-spacing: 1px;
+  }
+
+  .s0-right-content {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .s0-parts {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .s0-part {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--gray-mid);
+  }
+
+  .s0-part-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    color: var(--orange);
+    min-width: 50px;
+  }
+
+  .s0-part-title {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .s0-part-sub {
+    font-size: 11px;
+    color: var(--gray-light);
+    margin-top: 2px;
+  }
+
+  .s0-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gray-light);
+  }
+
+  /* ==================== SLIDE 1 — MARKET ==================== */
+  .s1 {
+    background: var(--black);
+    display: grid;
+    grid-template-columns: 55% 45%;
+  }
+
+  .s1-left {
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid var(--gray-mid);
+  }
+
+  .s1-headline {
+    font-size: clamp(70px, 9vw, 120px);
+    color: var(--white);
+  }
+
+  .s1-headline em {
+    color: var(--orange);
+    font-style: normal;
+  }
+
+  .s1-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--gray-mid);
+    border: 1px solid var(--gray-mid);
+  }
+
+  .s1-stat {
+    background: var(--black);
+    padding: 24px;
+  }
+
+  .s1-stat .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--orange);
+    line-height: 1;
+  }
+
+  .s1-stat .desc {
+    font-size: 11px;
+    color: var(--gray-light);
+    letter-spacing: 1px;
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  .s1-right {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .s1-right-top {
+    flex: 1;
+    padding: 60px 50px;
+    background: var(--orange);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .s1-right-top .big {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 100px;
+    line-height: 0.85;
+    color: var(--black);
+  }
+
+  .s1-right-top .context {
+    font-size: 13px;
+    color: var(--black);
+    margin-top: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .s1-right-bottom {
+    padding: 40px 50px;
+    border-top: 1px solid var(--gray-mid);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .s1-bullet {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--white);
+  }
+
+  .s1-bullet::before {
+    content: '→';
+    color: var(--orange);
+    flex-shrink: 0;
+    margin-top: 0px;
+    font-size: 13px;
+  }
+
+  /* ==================== SLIDE 2 — SYSTEM ==================== */
+  .s2 {
+    background: var(--black);
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+
+  .s2-header {
+    padding: 50px 60px 30px;
+    border-bottom: 1px solid var(--gray-mid);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .s2-title {
+    font-size: clamp(50px, 7vw, 90px);
+    line-height: 0.9;
+  }
+
+  .s2-title span { color: var(--orange); }
+
+  .s2-body {
+    display: grid;
+    grid-template-columns: 1fr 2px 2fr;
+    padding: 0;
+  }
+
+  .s2-left {
+    padding: 40px 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .s2-divider { background: var(--gray-mid); }
+
+  .s2-right {
+    padding: 40px 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .shopify-badge {
+    background: var(--orange);
+    color: var(--black);
+    padding: 24px;
+    margin-bottom: 8px;
+  }
+
+  .shopify-badge .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .shopify-badge .name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    line-height: 1;
+  }
+
+  .shopify-badge .desc {
+    font-size: 12px;
+    margin-top: 8px;
+    opacity: 0.8;
+    font-weight: 500;
+  }
+
+  .platform-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: var(--gray-mid);
+    border: 1px solid var(--gray-mid);
+  }
+
+  .platform-item {
+    background: var(--black);
+    padding: 20px 14px;
+    text-align: center;
+  }
+
+  .platform-item .icon {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+
+  .platform-item .pname {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .platform-item .prole {
+    font-size: 9px;
+    color: var(--gray-light);
+    margin-top: 4px;
+    line-height: 1.4;
+  }
+
+  .funnel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .funnel-step {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border: 1px solid var(--gray-mid);
+    color: var(--gray-light);
+    transition: all 0.3s;
+  }
+
+  .funnel-step.highlight {
+    background: var(--orange);
+    border-color: var(--orange);
+    color: var(--black);
+  }
+
+  .funnel-arrow {
+    color: var(--gray-light);
+    font-size: 12px;
+  }
+
+  .s2-note {
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--gray-light);
+  }
+
+  .s2-note strong {
+    color: var(--white);
+  }
+
+  /* ==================== SLIDE 3 — PLATFORM ROLES ==================== */
+  .s3 {
+    background: var(--black);
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+
+  .s3-header {
+    padding: 50px 60px 30px;
+    border-bottom: 1px solid var(--gray-mid);
+  }
+
+  .s3-title {
+    font-size: clamp(50px, 7vw, 85px);
+    line-height: 0.9;
+  }
+
+  .s3-title span { color: var(--orange); }
+
+  .s3-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border-top: 1px solid var(--gray-mid);
+  }
+
+  .s3-platform {
+    padding: 40px 30px;
+    border-right: 1px solid var(--gray-mid);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: background 0.3s;
+  }
+
+  .s3-platform:last-child { border-right: none; }
+
+  .s3-platform:hover { background: var(--gray); }
+
+  .s3-platform-emoji { font-size: 32px; }
+
+  .s3-platform-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    line-height: 1;
+  }
+
+  .s3-platform-role {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+
+  .s3-platform-points {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  .s3-platform-points li {
+    font-size: 11px;
+    color: var(--gray-light);
+    line-height: 1.5;
+    padding-left: 12px;
+    position: relative;
+  }
+
+  .s3-platform-points li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--orange);
+    font-size: 10px;
+  }
+
+  /* ==================== SLIDE 4 — PLATFORM LANDSCAPE ==================== */
+  .s4 {
+    background: var(--black);
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+
+  .s4-header {
+    padding: 50px 60px 30px;
+    border-bottom: 1px solid var(--gray-mid);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .s4-title {
+    font-size: clamp(50px, 7vw, 85px);
+    line-height: 0.9;
+  }
+
+  .s4-title span { color: var(--orange); }
+
+  .s4-body {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border-top: none;
+  }
+
+  .s4-platform {
+    padding: 36px 28px;
+    border-right: 1px solid var(--gray-mid);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .s4-platform:last-child { border-right: none; }
+
+  .s4-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--orange);
+    border: 1px solid var(--orange);
+    padding: 2px 8px;
+    display: inline-block;
+  }
+
+  .s4-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    line-height: 1;
+  }
+
+  .s4-desc {
+    font-size: 11px;
+    color: var(--gray-light);
+    line-height: 1.6;
+  }
+
+  .s4-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-mid);
+  }
+
+  .s4-features li {
+    font-size: 10px;
+    color: var(--white);
+    letter-spacing: 0.5px;
+  }
+
+  /* ==================== SLIDE 5 — VERDICT ==================== */
+  .s5 {
+    background: var(--black);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .s5-left {
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid var(--gray-mid);
+  }
+
+  .s5-title {
+    font-size: clamp(50px, 7vw, 90px);
+    line-height: 0.9;
+  }
+
+  .s5-title span { color: var(--orange); }
+
+  .s5-rankings {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .s5-rank {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    border: 1px solid var(--gray-mid);
+    transition: border-color 0.3s;
+  }
+
+  .s5-rank:hover { border-color: var(--orange); }
+
+  .s5-rank-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 60px;
+    color: var(--orange);
+    line-height: 1;
+    min-width: 50px;
+  }
+
+  .s5-rank-content {}
+
+  .s5-rank-platform {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .s5-rank-why {
+    font-size: 11px;
+    color: var(--gray-light);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  .s5-right {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .s5-flow {
+    flex: 1;
+    padding: 60px 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: center;
+  }
+
+  .s5-flow-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gray-light);
+    margin-bottom: 20px;
+  }
+
+  .s5-flow-step {
+    padding: 18px 24px;
+    border-left: 3px solid var(--gray-mid);
+    font-size: 13px;
+    font-weight: 600;
+    transition: border-color 0.3s;
+    position: relative;
+  }
+
+  .s5-flow-step.active {
+    border-left-color: var(--orange);
+    background: rgba(232, 80, 42, 0.06);
+  }
+
+  .s5-flow-step .sub {
+    font-size: 11px;
+    color: var(--gray-light);
+    font-weight: 400;
+    margin-top: 4px;
+  }
+
+  .s5-niche {
+    padding: 30px 50px;
+    border-top: 1px solid var(--gray-mid);
+    background: var(--gray);
+  }
+
+  .s5-niche-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 10px;
+  }
+
+  .s5-niche-text {
+    font-size: 12px;
+    color: var(--gray-light);
+    line-height: 1.7;
+  }
+
+  /* ==================== SLIDE 6 — AI BUSINESS CASE ==================== */
+  .s6 {
+    background: var(--orange);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .s6-left {
+    padding: 60px;
+    background: var(--black);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .s6-title {
+    font-size: clamp(60px, 8vw, 110px);
+    line-height: 0.9;
+    color: var(--white);
+  }
+
+  .s6-title span { color: var(--orange); }
+
+  .s6-cases {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .s6-case {
+    padding: 20px;
+    border: 1px solid var(--gray-mid);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .s6-case-logo {
+    font-size: 24px;
+    margin-top: 2px;
+  }
+
+  .s6-case-name {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .s6-case-result {
+    font-size: 11px;
+    color: var(--gray-light);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  .s6-case-result strong {
+    color: var(--orange);
+  }
+
+  .s6-right {
+    padding: 60px;
+    background: var(--orange);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 40px;
+  }
+
+  .s6-big-stat {
+    color: var(--black);
+  }
+
+  .s6-big-stat .num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px, 10vw, 140px);
+    line-height: 0.85;
+  }
+
+  .s6-big-stat .unit {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+  }
+
+  .s6-big-stat .label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 8px;
+    opacity: 0.7;
+  }
+
+  .s6-stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .s6-mini-stat {
+    background: rgba(0,0,0,0.15);
+    padding: 20px;
+  }
+
+  .s6-mini-stat .n {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    color: var(--black);
+    line-height: 1;
+  }
+
+  .s6-mini-stat .l {
+    font-size: 10px;
+    color: var(--black);
+    opacity: 0.7;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .s6-problem {
+    background: var(--black);
+    color: var(--white);
+    padding: 20px;
+  }
+
+  .s6-problem .q {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 8px;
+  }
+
+  .s6-problem p {
+    font-size: 12px;
+    line-height: 1.7;
+  }
+
+  /* ==================== SLIDE 7 — IMAGINATION GAP ==================== */
+  .s7 {
+    background: var(--black);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .s7-left {
+    padding: 60px;
+    border-right: 1px solid var(--gray-mid);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .s7-title {
+    font-size: clamp(55px, 7.5vw, 100px);
+    line-height: 0.9;
+  }
+
+  .s7-title span { color: var(--orange); }
+
+  .s7-definition {
+    background: var(--gray);
+    padding: 30px;
+    border-left: 4px solid var(--orange);
+  }
+
+  .s7-definition .term {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 12px;
+  }
+
+  .s7-definition p {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--white);
+  }
+
+  .s7-impacts {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .s7-impact {
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--gray-mid);
+  }
+
+  .s7-impact .icon { font-size: 18px; min-width: 24px; }
+
+  .s7-impact .text { font-size: 12px; color: var(--gray-light); line-height: 1.5; }
+  .s7-impact .text strong { color: var(--white); }
+
+  .s7-right {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .s7-right-top {
+    flex: 1;
+    padding: 60px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+    background: var(--gray);
+  }
+
+  .s7-gap-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--orange);
+    text-transform: uppercase;
+  }
+
+  .s7-gap-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .s7-gap-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .s7-gap-bar .bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .s7-gap-bar .bar-label .val { color: var(--orange); font-weight: 700; }
+
+  .s7-bar-track {
+    height: 6px;
+    background: var(--gray-mid);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .s7-bar-fill {
+    height: 100%;
+    background: var(--orange);
+    animation: fillBar 1.5s ease forwards;
+  }
+
+  @keyframes fillBar {
+    from { width: 0; }
+  }
+
+  .s7-right-bottom {
+    padding: 30px 50px;
+    border-top: 1px solid var(--gray-mid);
+    background: rgba(232, 80, 42, 0.08);
+  }
+
+  .s7-conclusion {
+    font-size: 13px;
+    line-height: 1.7;
+    font-weight: 600;
+  }
+
+  .s7-conclusion span { color: var(--orange); }
+
+  /* ==================== SLIDE 8 — COMPARISON ==================== */
+  .s8 {
+    background: var(--black);
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+
+  .s8-header {
+    padding: 46px 60px 24px;
+    border-bottom: 1px solid var(--gray-mid);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .s8-title {
+    font-size: clamp(45px, 6vw, 80px);
+    line-height: 0.9;
+  }
+
+  .s8-title span { color: var(--orange); }
+
+  .s8-body {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .s8-platform {
+    padding: 30px 24px;
+    border-right: 1px solid var(--gray-mid);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .s8-platform:last-child { border-right: none; }
+
+  .s8-platform.winner {
+    background: rgba(232, 80, 42, 0.07);
+    border-right-color: var(--orange);
+  }
+
+  .s8-platform.winner:last-child { border-right: none; }
+
+  .s8-p-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 38px;
+    line-height: 1;
+  }
+
+  .s8-platform.winner .s8-p-name { color: var(--orange); }
+
+  .s8-winner-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--orange);
+    padding: 3px 8px;
+    display: inline-block;
+  }
+
+  .s8-verdict {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 0;
+    border-top: 1px solid var(--gray-mid);
+  }
+
+  .s8-verdict.good { color: #4CAF50; }
+  .s8-verdict.mid { color: var(--accent-yellow); }
+  .s8-verdict.low { color: var(--gray-light); }
+
+  .s8-points {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .s8-points li {
+    font-size: 10px;
+    color: var(--gray-light);
+    line-height: 1.5;
+    padding-left: 10px;
+    position: relative;
+  }
+
+  .s8-points li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--gray-mid);
+  }
+
+  .s8-platform.winner .s8-points li { color: rgba(245, 242, 236, 0.8); }
+
+  .s8-platform.winner .s8-points li::before { color: var(--orange); }
+
+  /* ==================== SLIDE 9 — TECH DEEP DIVE ==================== */
+  .s9 {
+    background: var(--black);
+    display: grid;
+    grid-template-columns: 40% 60%;
+  }
+
+  .s9-left {
+    padding: 60px;
+    border-right: 1px solid var(--gray-mid);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .s9-title {
+    font-size: clamp(50px, 7vw, 90px);
+    line-height: 0.9;
+  }
+
+  .s9-title span { color: var(--orange); }
+
+  .s9-score-card {
+    background: var(--gray);
+    padding: 28px;
+  }
+
+  .s9-score-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 20px;
+  }
+
+  .s9-scores {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .s9-score-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .s9-score-name { font-size: 11px; color: var(--gray-light); }
+
+  .s9-score-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--orange);
+    font-weight: 500;
+  }
+
+  .s9-score-bar {
+    height: 3px;
+    background: var(--gray-mid);
+    grid-column: 1 / -1;
+    margin-top: -8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .s9-score-fill {
+    height: 100%;
+    background: var(--orange);
+    animation: fillBar 1s ease forwards;
+  }
+
+  .s9-right {
+    padding: 50px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--gray-mid);
+    border-left: none;
+  }
+
+  .s9-feature {
+    background: var(--black);
+    padding: 24px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .s9-feature-icon {
+    font-size: 20px;
+  }
+
+  .s9-feature-name {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+
+  .s9-feature-desc {
+    font-size: 11px;
+    color: var(--gray-light);
+    line-height: 1.6;
+  }
+
+  .s9-feature-desc strong { color: var(--white); }
+
+  /* ==================== SLIDE 10 — HYBRID MODEL ==================== */
+  .s10 {
+    background: var(--black);
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+
+  .s10-header {
+    padding: 46px 60px 24px;
+    border-bottom: 1px solid var(--gray-mid);
+  }
+
+  .s10-title {
+    font-size: clamp(50px, 7vw, 85px);
+    line-height: 0.9;
+  }
+
+  .s10-title span { color: var(--orange); }
+
+  .s10-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .s10-timeline {
+    border-right: 1px solid var(--gray-mid);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .s10-time-block {
+    flex: 1;
+    padding: 36px 50px;
+    border-bottom: 1px solid var(--gray-mid);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .s10-time-block:last-child { border-bottom: none; }
+
+  .s10-time-block.prime { background: rgba(232, 80, 42, 0.06); }
+
+  .s10-time-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .s10-time-tag.p { color: var(--orange); }
+  .s10-time-tag.o { color: var(--gray-light); }
+
+  .s10-time-hours {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    line-height: 1;
+  }
+
+  .s10-time-block.prime .s10-time-hours { color: var(--orange); }
+
+  .s10-time-who {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .s10-time-desc {
+    font-size: 11px;
+    color: var(--gray-light);
+    line-height: 1.6;
+  }
+
+  .s10-right {
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    justify-content: center;
+  }
+
+  .s10-rule {
+    background: var(--orange);
+    color: var(--black);
+    padding: 28px;
+  }
+
+  .s10-rule .r-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 12px;
+  }
+
+  .s10-rule .r-text {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  .s10-format {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .s10-format-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+
+  .s10-screen {
+    border: 1px solid var(--gray-mid);
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    height: 120px;
+    overflow: hidden;
+  }
+
+  .s10-screen-ai {
+    background: var(--gray);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    border-right: 1px solid var(--gray-mid);
+    padding: 12px;
+  }
+
+  .s10-screen-ai .emoji { font-size: 24px; }
+  .s10-screen-ai .ai-label { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--orange); }
+
+  .s10-screen-human {
+    background: rgba(232, 80, 42, 0.08);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 16px;
+    gap: 6px;
+  }
+
+  .s10-screen-human .h-label { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray-light); }
+  .s10-screen-human .h-text { font-size: 12px; font-weight: 600; color: var(--white); }
+  .s10-screen-human .h-sub { font-size: 10px; color: var(--gray-light); }
+
+  .s10-result {
+    font-size: 12px;
+    color: var(--gray-light);
+    line-height: 1.7;
+  }
+
+  .s10-result strong { color: var(--white); }
+
+  /* ==================== SLIDE 11 — USE CASES ==================== */
+  .s11 {
+    background: var(--black);
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+
+  .s11-header {
+    padding: 46px 60px 24px;
+    border-bottom: 1px solid var(--gray-mid);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .s11-title {
+    font-size: clamp(45px, 6vw, 75px);
+    line-height: 0.9;
+  }
+
+  .s11-title span { color: var(--orange); }
+
+  .s11-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+
+  .s11-zone {
+    padding: 32px 36px;
+    border-right: 1px solid var(--gray-mid);
+    border-bottom: 1px solid var(--gray-mid);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .s11-zone:nth-child(3), .s11-zone:nth-child(6) { border-right: none; }
+  .s11-zone:nth-child(4), .s11-zone:nth-child(5), .s11-zone:nth-child(6) { border-bottom: none; }
+
+  .s11-zone.invest { background: rgba(76, 175, 80, 0.05); }
+  .s11-zone.care { background: rgba(245, 200, 66, 0.05); }
+  .s11-zone.avoid { background: rgba(232, 80, 42, 0.05); }
+
+  .s11-zone-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    display: inline-block;
+    padding: 3px 8px;
+    font-weight: 700;
+  }
+
+  .s11-zone.invest .s11-zone-tag { color: #4CAF50; border: 1px solid #4CAF50; }
+  .s11-zone.care .s11-zone-tag { color: var(--accent-yellow); border: 1px solid var(--accent-yellow); }
+  .s11-zone.avoid .s11-zone-tag { color: var(--orange); border: 1px solid var(--orange); }
+
+  .s11-zone-title {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .s11-zone.invest .s11-zone-title { color: #4CAF50; }
+  .s11-zone.care .s11-zone-title { color: var(--accent-yellow); }
+  .s11-zone.avoid .s11-zone-title { color: var(--orange); }
+
+  .s11-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .s11-items li {
+    font-size: 11px;
+    color: var(--gray-light);
+    line-height: 1.5;
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .s11-zone.invest .s11-items li::before { content: '✓'; position: absolute; left: 0; color: #4CAF50; font-size: 10px; }
+  .s11-zone.care .s11-items li::before { content: '!'; position: absolute; left: 0; color: var(--accent-yellow); font-size: 10px; font-weight: 700; }
+  .s11-zone.avoid .s11-items li::before { content: '✕'; position: absolute; left: 0; color: var(--orange); font-size: 10px; }
+
+  /* ==================== SLIDE 12 — TRUST CLIFF ==================== */
+  .s12 {
+    background: var(--black);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .s12-left {
+    padding: 60px;
+    border-right: 1px solid var(--gray-mid);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .s12-title {
+    font-size: clamp(50px, 7vw, 85px);
+    line-height: 0.9;
+  }
+
+  .s12-title span { color: var(--orange); }
+
+  .s12-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .s12-stat {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    border: 1px solid var(--gray-mid);
+  }
+
+  .s12-stat .pct {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    line-height: 1;
+    min-width: 100px;
+    color: var(--orange);
+  }
+
+  .s12-stat.dim .pct { color: var(--gray-light); }
+
+  .s12-stat .desc { font-size: 12px; color: var(--gray-light); line-height: 1.6; }
+  .s12-stat .desc strong { color: var(--white); }
+
+  .s12-right {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .s12-barrier {
+    flex: 1;
+    padding: 60px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+  }
+
+  .s12-barrier-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+  }
+
+  .s12-barrier-items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .s12-barrier-item {
+    padding: 16px 20px;
+    border-left: 3px solid var(--gray-mid);
+    font-size: 12px;
+    color: var(--gray-light);
+    line-height: 1.6;
+  }
+
+  .s12-barrier-item.critical {
+    border-left-color: var(--orange);
+    background: rgba(232, 80, 42, 0.06);
+    color: var(--white);
+  }
+
+  .s12-strategy {
+    padding: 36px 50px;
+    background: var(--orange);
+  }
+
+  .s12-strategy .s-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--black);
+    opacity: 0.7;
+    margin-bottom: 12px;
+  }
+
+  .s12-strategy .s-text {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--black);
+    line-height: 1.5;
+  }
+
+  /* ==================== SLIDE 13 — RISKS ==================== */
+  .s13 {
+    background: var(--black);
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+
+  .s13-header {
+    padding: 46px 60px 24px;
+    border-bottom: 1px solid var(--gray-mid);
+  }
+
+  .s13-title {
+    font-size: clamp(50px, 7vw, 85px);
+    line-height: 0.9;
+  }
+
+  .s13-title span { color: var(--orange); }
+
+  .s13-body {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .s13-risk {
+    padding: 36px 28px;
+    border-right: 1px solid var(--gray-mid);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: background 0.3s;
+  }
+
+  .s13-risk:last-child { border-right: none; }
+  .s13-risk:hover { background: var(--gray); }
+
+  .s13-risk-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--orange);
+  }
+
+  .s13-risk-level {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    display: inline-block;
+  }
+
+  .s13-risk-level.critical { background: var(--orange); color: var(--black); }
+  .s13-risk-level.high { color: var(--orange); border: 1px solid var(--orange); }
+  .s13-risk-level.medium { color: var(--accent-yellow); border: 1px solid var(--accent-yellow); }
+
+  .s13-risk-name {
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .s13-risk-issue {
+    font-size: 10px;
+    color: var(--gray-light);
+    line-height: 1.6;
+  }
+
+  .s13-risk-fix {
+    font-size: 10px;
+    color: var(--white);
+    line-height: 1.6;
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-mid);
+    margin-top: auto;
+  }
+
+  .s13-risk-fix strong { color: var(--orange); }
+
+  /* ==================== SLIDE 14 — VERDICT ==================== */
+  .s14 {
+    background: var(--orange);
+    display: grid;
+    grid-template-columns: 60% 40%;
+  }
+
+  .s14-left {
+    background: var(--black);
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid var(--orange);
+  }
+
+  .s14-title {
+    font-size: clamp(55px, 7.5vw, 100px);
+    line-height: 0.9;
+    color: var(--white);
+  }
+
+  .s14-title span { color: var(--orange); }
+
+  .s14-answer {
+    background: var(--orange);
+    color: var(--black);
+    padding: 28px 32px;
+    margin: 20px 0;
+  }
+
+  .s14-answer .a-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 10px;
+  }
+
+  .s14-answer .a-text {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .s14-qs {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .s14-q {
+    padding: 16px 20px;
+    border: 1px solid var(--gray-mid);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .s14-q-text { font-size: 11px; color: var(--gray-light); line-height: 1.5; }
+  .s14-q-text strong { color: var(--white); display: block; margin-bottom: 4px; font-size: 12px; }
+
+  .s14-q-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    white-space: nowrap;
+  }
+
+  .s14-q-tag.big { background: var(--orange); color: var(--black); }
+  .s14-q-tag.risk { color: var(--orange); border: 1px solid var(--orange); }
+  .s14-q-tag.mid { color: var(--accent-yellow); border: 1px solid var(--accent-yellow); }
+
+  .s14-right {
+    background: var(--orange);
+    padding: 60px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .s14-roi-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--black);
+    opacity: 0.7;
+    margin-bottom: 20px;
+  }
+
+  .s14-roi-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 110px;
+    line-height: 0.85;
+    color: var(--black);
+  }
+
+  .s14-roi-sub {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--black);
+    margin-top: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.8;
+  }
+
+  .s14-conditions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .s14-condition {
+    background: rgba(0,0,0,0.15);
+    padding: 16px;
+    font-size: 11px;
+    color: var(--black);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  /* ==================== SLIDE 15 — NEXT STEPS ==================== */
+  .s15 {
+    background: var(--black);
+    display: grid;
+    grid-template-columns: 45% 55%;
+  }
+
+  .s15-left {
+    padding: 60px;
+    border-right: 1px solid var(--gray-mid);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .s15-title {
+    font-size: clamp(55px, 7.5vw, 95px);
+    line-height: 0.9;
+  }
+
+  .s15-title span { color: var(--orange); }
+
+  .s15-contact {
+    border-top: 1px solid var(--gray-mid);
+    padding-top: 28px;
+  }
+
+  .s15-contact .c-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gray-light);
+    margin-bottom: 10px;
+  }
+
+  .s15-contact .c-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--white);
+  }
+
+  .s15-contact .c-email {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--orange);
+    margin-top: 4px;
+  }
+
+  .s15-right {
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: center;
+  }
+
+  .s15-step {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 20px;
+    align-items: start;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--gray-mid);
+    transition: background 0.3s;
+  }
+
+  .s15-step:last-child { border-bottom: none; }
+  .s15-step:hover { background: var(--gray); margin: 0 -24px; padding: 20px 24px; }
+
+  .s15-step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 50px;
+    color: var(--orange);
+    line-height: 1;
+  }
+
+  .s15-step-content {}
+
+  .s15-step-action {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .s15-step-desc {
+    font-size: 11px;
+    color: var(--gray-light);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  .s15-metrics {
+    margin-top: 24px;
+    padding: 20px;
+    background: var(--gray);
+    border-left: 3px solid var(--orange);
+  }
+
+  .s15-metrics-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 12px;
+  }
+
+  .s15-metrics-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .s15-metric {
+    font-size: 10px;
+    padding: 4px 10px;
+    border: 1px solid var(--gray-mid);
+    color: var(--gray-light);
+    letter-spacing: 1px;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--orange), var(--orange-light), var(--accent-yellow));
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 200;
+    box-shadow: 0 0 10px rgba(232, 80, 42, 0.5);
+  }
+
+  /* SLIDE NUMBER */
+  .slide-num-display {
+    position: fixed;
+    top: 28px;
+    right: 40px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--gray-light);
+    z-index: 100;
+    transition: opacity 0.3s;
+  }
+
+  .slide-num-display span { color: var(--white); }
+
+  /* ==================== SLIDE OMNI — OMNICHANNEL MATRIX ==================== */
+  .s-omni {
+    background: var(--black);
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+
+  .s-omni-header {
+    padding: 46px 60px 24px;
+    border-bottom: 1px solid var(--gray-mid);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .s-omni-title {
+    font-size: clamp(42px, 5.5vw, 72px);
+    line-height: 0.9;
+  }
+
+  .s-omni-title span { color: var(--orange); }
+
+  .s-omni-body {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .s-omni-platform {
+    padding: 30px 26px;
+    border-right: 1px solid var(--gray-mid);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: background 0.3s;
+  }
+
+  .s-omni-platform:last-child { border-right: none; }
+  .s-omni-platform:hover { background: var(--gray); }
+
+  .s-omni-p-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    line-height: 1;
+  }
+
+  .s-omni-fit {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    display: inline-block;
+  }
+
+  .s-omni-fit.very-high { background: var(--orange); color: var(--black); }
+  .s-omni-fit.high { color: #4CAF50; border: 1px solid #4CAF50; }
+  .s-omni-fit.mid-high { color: var(--accent-yellow); border: 1px solid var(--accent-yellow); }
+  .s-omni-fit.medium { color: var(--gray-light); border: 1px solid var(--gray-light); }
+
+  .s-omni-section {
+    padding-top: 10px;
+    border-top: 1px solid var(--gray-mid);
+  }
+
+  .s-omni-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 6px;
+  }
+
+  .s-omni-section-text {
+    font-size: 10px;
+    color: var(--gray-light);
+    line-height: 1.6;
+  }
+
+  .s-omni-section-text strong {
+    color: var(--white);
+  }
+
+  .s-omni-risk-tag {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    display: inline-block;
+    margin-bottom: 4px;
+  }
+
+  .s-omni-risk-tag.critical { background: var(--orange); color: var(--black); }
+  .s-omni-risk-tag.low { color: #4CAF50; border: 1px solid #4CAF50; }
+
+  /* HOVER MICRO-INTERACTIONS */
+  .s3-platform, .s4-platform, .s8-platform, .s13-risk, .s-omni-platform {
+    transition: background 0.3s, transform 0.3s;
+  }
+  .s3-platform:hover, .s4-platform:hover, .s8-platform:hover, .s13-risk:hover, .s-omni-platform:hover {
+    transform: translateY(-2px);
+  }
+
+  .s5-rank, .s14-q {
+    transition: border-color 0.3s, transform 0.3s, background 0.3s;
+  }
+  .s5-rank:hover, .s14-q:hover {
+    transform: translateX(4px);
+    background: rgba(232, 80, 42, 0.04);
+  }
+
+  /* CURSOR GROW ON INTERACTIVE */
+  .cursor.grow {
+    width: 40px;
+    height: 40px;
+    opacity: 0.5;
+  }
+
+  /* NAV GLOW */
+  .nav {
+    animation: glowPulse 4s ease-in-out infinite;
+  }
+
+  /* SMOOTH SCROLLBAR HIDE */
+  ::-webkit-scrollbar { display: none; }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="particles" id="particles"></div>
+<div class="progress-bar" id="progress"></div>
+<div class="slide-num-display" id="slideNum"><span>01</span> / 17</div>
+
+<div class="deck" id="deck">
+
+  <!-- SLIDE 0: COVER -->
+  <div class="slide active" data-index="0">
+    <div class="s0">
+      <div class="s0-left">
+        <div>
+          <div class="slide-label orange">Megsu Strategic Brief — May 2026</div>
+          <div class="s0-headline display" style="margin-top:20px;">
+            AI LIVE<span>STREAM</span> &amp; SOCIAL COMMERCE
+          </div>
+          <div style="font-size:13px;color:var(--gray-light);margin-top:20px;line-height:1.8;max-width:400px;">
+            A full strategic review of Megsu's multi-channel commerce system, livestream platform landscape, and the AnyLive AI deployment proposal for 2026.
+          </div>
+        </div>
+        <div>
+          <div class="s0-meta">
+            <div class="s0-meta-item">
+              <div class="val">3</div>
+              <div class="label">Strategic Sections</div>
+            </div>
+            <div class="s0-meta-item">
+              <div class="val">15</div>
+              <div class="label">Key Slides</div>
+            </div>
+            <div class="s0-meta-item">
+              <div class="val">$100B</div>
+              <div class="label">US Market Size 2026</div>
+            </div>
+            <div class="s0-meta-item">
+              <div class="val">30%</div>
+              <div class="label">Livestream Conversion</div>
+            </div>
+          </div>
+          <div class="s0-date" style="margin-top:20px;">Meeting // 20.05.2026 // Prepared for Board of Directors</div>
+        </div>
+      </div>
+      <div class="s0-right">
+        <div class="s0-right-content">
+          <div>
+            <div class="slide-label" style="margin-bottom:20px;">Deck Structure</div>
+            <div class="s0-parts">
+              <div class="s0-part">
+                <div class="s0-part-num">I</div>
+                <div>
+                  <div class="s0-part-title">Social Commerce Flow 2026</div>
+                  <div class="s0-part-sub">Multi-channel system · Platform roles · Commerce funnel</div>
+                </div>
+              </div>
+              <div class="s0-part">
+                <div class="s0-part-num">II</div>
+                <div>
+                  <div class="s0-part-title">Livestream Platform Landscape</div>
+                  <div class="s0-part-sub">8 platforms evaluated · Best fit for outdoor furniture</div>
+                </div>
+              </div>
+              <div class="s0-part">
+                <div class="s0-part-num">III</div>
+                <div>
+                  <div class="s0-part-title">AI Livestream — AnyLive Proposal</div>
+                  <div class="s0-part-sub">Market case · Tech deep-dive · Risk · Strategic verdict</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 1: MARKET OPPORTUNITY -->
+  <div class="slide" data-index="1">
+    <div class="s1">
+      <div class="s1-left">
+        <div>
+          <div class="slide-label orange">Market Context 2026</div>
+          <div class="s1-headline display" style="margin-top:16px;">THE <em>$100B</em> OPPOR&shy;TUNITY</div>
+        </div>
+        <div>
+          <div class="s1-stats">
+            <div class="s1-stat">
+              <div class="num">30%</div>
+              <div class="desc">Livestream conversion rate vs. 2% traditional e-commerce — a 15× difference</div>
+            </div>
+            <div class="s1-stat">
+              <div class="num">60%+</div>
+              <div class="desc">Of product discovery now happens on TikTok, Instagram, and YouTube</div>
+            </div>
+            <div class="s1-stat">
+              <div class="num">$68B</div>
+              <div class="desc">US Live Commerce market size projected by end of 2026</div>
+            </div>
+            <div class="s1-stat">
+              <div class="num">$27.7B</div>
+              <div class="desc">AUD — Australia Social Commerce, outdoor niche booming</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="s1-right">
+        <div class="s1-right-top">
+          <div class="big display">TIK<br>TOK<br>SHOP</div>
+          <div class="context">80.4M buyers · $23.41B GMV · 4.7% CVR</div>
+          <div style="font-size:12px;color:var(--black);margin-top:12px;opacity:0.65;line-height:1.7;">TikTok Shop leads conversion — 2× Instagram, 3× Facebook. The platform most aligned with impulse outdoor furniture discovery.</div>
+        </div>
+        <div class="s1-right-bottom">
+          <div class="slide-label" style="margin-bottom:4px;">Key Signals</div>
+          <div class="s1-bullet">Gen Z + Millennials drive 32% of total spend. 80% buy based on social influence.</div>
+          <div class="s1-bullet">Customers prefer AR-integrated platforms for outdoor furniture — visualize before buying.</div>
+          <div class="s1-bullet">Amazon shifting to creator-commerce model: real audience, brand authority, niche depth.</div>
+          <div class="s1-bullet">Algorithms penalize hard-sell content. Shoppertainment is the only winning format.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: MEGSU SYSTEM -->
+  <div class="slide" data-index="2">
+    <div class="s2">
+      <div class="s2-header">
+        <div>
+          <div class="slide-label orange">Part I — Social Commerce Flow</div>
+          <div class="s2-title display" style="margin-top:12px;">MEGSU'S <span>MULTI-CHANNEL</span> SYSTEM</div>
+        </div>
+        <div class="slide-label" style="text-align:right;max-width:200px;">All roads lead to Shopify</div>
+      </div>
+      <div class="s2-body">
+        <div class="s2-left">
+          <div class="shopify-badge">
+            <div class="label mono">Command Center</div>
+            <div class="name display">SHOPIFY</div>
+            <div class="desc">Checkout · Payments · Orders · All Ads Attribution</div>
+          </div>
+          <div style="font-size:12px;color:var(--gray-light);line-height:1.8;">
+            <strong style="color:var(--white);display:block;margin-bottom:8px;">Shopify is not a platform. It's the nervous system.</strong>
+            Every traffic source — livestream, content, ads — has one job: push buyers to Shopify checkout. Nothing else matters if this pipeline leaks.
+          </div>
+          <div class="funnel" style="margin-top:16px;">
+            <div class="funnel-step">Awareness</div>
+            <div class="funnel-arrow">→</div>
+            <div class="funnel-step">Livestream</div>
+            <div class="funnel-arrow">→</div>
+            <div class="funnel-step highlight">Checkout</div>
+            <div class="funnel-arrow">→</div>
+            <div class="funnel-step">Retarget</div>
+            <div class="funnel-arrow">→</div>
+            <div class="funnel-step">Repeat</div>
+          </div>
+        </div>
+        <div class="s2-divider"></div>
+        <div class="s2-right">
+          <div class="slide-label" style="margin-bottom:8px;">5 Traffic Engines → Shopify</div>
+          <div class="platform-grid">
+            <div class="platform-item">
+              <div class="icon">📦</div>
+              <div class="pname">Amazon</div>
+              <div class="prole">Live · High Intent · Trust</div>
+            </div>
+            <div class="platform-item">
+              <div class="icon">🎵</div>
+              <div class="pname">TikTok</div>
+              <div class="prole">Viral · Short-form · Acquisition</div>
+            </div>
+            <div class="platform-item">
+              <div class="icon">📘</div>
+              <div class="pname">Facebook</div>
+              <div class="prole">Retarget · Conversion Ads</div>
+            </div>
+            <div class="platform-item">
+              <div class="icon">📸</div>
+              <div class="pname">Instagram</div>
+              <div class="prole">Brand · Lifestyle · Reels</div>
+            </div>
+            <div class="platform-item">
+              <div class="icon">▶️</div>
+              <div class="pname">YouTube</div>
+              <div class="prole">SEO · Trust · Evergreen</div>
+            </div>
+          </div>
+          <div style="margin-top:20px;" class="s2-note">
+            <strong>Core rule:</strong> Each platform has one primary job. TikTok acquires, Instagram brands, YouTube trusts, Facebook retargets, Amazon converts. Confusion between these roles kills ROI.
+          </div>
+          <div style="margin-top:16px;" class="s2-note">
+            <strong>Email + SMS retargeting</strong> sits between checkout and repeat purchase — the highest-leverage, lowest-cost layer in the entire system.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: PLATFORM ROLES -->
+  <div class="slide" data-index="3">
+    <div class="s3">
+      <div class="s3-header">
+        <div class="slide-label orange">Part I — Platform Breakdown</div>
+        <div class="s3-title display" style="margin-top:12px;">PLATFORM <span>ROLES</span><br>WHO DOES WHAT</div>
+      </div>
+      <div class="s3-grid">
+        <div class="s3-platform">
+          <div class="s3-platform-emoji">📦</div>
+          <div class="s3-platform-name display">AMAZON LIVE</div>
+          <div class="s3-platform-role">High-Intent Conversion</div>
+          <ul class="s3-platform-points">
+            <li>Leverage existing store traffic & trust</li>
+            <li>Buyers 17× more likely to purchase during live</li>
+            <li>Deep Amazon Seller Central API sync</li>
+            <li>Scale without new customer acquisition cost</li>
+          </ul>
+        </div>
+        <div class="s3-platform">
+          <div class="s3-platform-emoji">🎵</div>
+          <div class="s3-platform-name display">TIKTOK SHOP</div>
+          <div class="s3-platform-role">Viral Acquisition Engine</div>
+          <ul class="s3-platform-points">
+            <li>4.7% CVR — highest of all social platforms</li>
+            <li>Fast product testing via short-form video</li>
+            <li>80.4M active buyers in US alone</li>
+            <li>Shoppertainment format matches outdoor lifestyle</li>
+          </ul>
+        </div>
+        <div class="s3-platform">
+          <div class="s3-platform-emoji">📘</div>
+          <div class="s3-platform-name display">FACEBOOK</div>
+          <div class="s3-platform-role">Retargeting Machine</div>
+          <ul class="s3-platform-points">
+            <li>Remarketing ads to warm audiences</li>
+            <li>Traffic + conversion campaigns to Shopify</li>
+            <li>Livestream to pull existing followers</li>
+            <li>Best for Gen X, Millennials with purchase intent</li>
+          </ul>
+        </div>
+        <div class="s3-platform">
+          <div class="s3-platform-emoji">📸</div>
+          <div class="s3-platform-name display">INSTAGRAM</div>
+          <div class="s3-platform-role">Brand Building Layer</div>
+          <ul class="s3-platform-points">
+            <li>Outdoor lifestyle aesthetic — Reels, Stories</li>
+            <li>Visual product showcase, sân vườn, camping</li>
+            <li>Link in bio + Story sticker → Shopify</li>
+            <li>Build trust before purchase decision</li>
+          </ul>
+        </div>
+        <div class="s3-platform">
+          <div class="s3-platform-emoji">▶️</div>
+          <div class="s3-platform-name display">YOUTUBE</div>
+          <div class="s3-platform-role">Long-Term Trust Engine</div>
+          <ul class="s3-platform-points">
+            <li>Assembly tutorials, setup guides, reviews</li>
+            <li>SEO-driven evergreen traffic — free forever</li>
+            <li>YouTube Shopping for in-video checkout</li>
+            <li>Behind-the-scenes builds brand authenticity</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: PLATFORM LANDSCAPE -->
+  <div class="slide" data-index="4">
+    <div class="s4">
+      <div class="s4-header">
+        <div>
+          <div class="slide-label orange">Part II — Livestream Landscape</div>
+          <div class="s4-title display" style="margin-top:12px;">BEYOND <span>THE BIG 5</span><br>EMERGING PLATFORMS</div>
+        </div>
+        <div class="slide-label" style="text-align:right;">5 platforms · US / AUS / CAN</div>
+      </div>
+      <div class="s4-body">
+        <div class="s4-platform">
+          <div class="s4-tag">Live Shopping</div>
+          <div class="s4-name display">NTWRK</div>
+          <div class="s4-desc">Curated live commerce for streetwear, lifestyle & collectibles. High-energy drops format.</div>
+          <ul class="s4-features">
+            <li>Exclusive drops + flash sales</li>
+            <li>Celeb & creator content</li>
+            <li>Requires Shopify + Stripe Connect</li>
+            <li>Best for limited-edition plays</li>
+          </ul>
+        </div>
+        <div class="s4-platform">
+          <div class="s4-tag">Auction + Buy Now</div>
+          <div class="s4-name display">eBAY LIVE</div>
+          <div class="s4-desc">Established marketplace with global US/AUS/CAN reach. Combines auction with live commerce.</div>
+          <ul class="s4-features">
+            <li>Realtime bidding + Buy It Now</li>
+            <li>Live chat & flash sale tools</li>
+            <li>Buyer Protection builds trust</li>
+            <li>Strong in used/collectible space</li>
+          </ul>
+        </div>
+        <div class="s4-platform">
+          <div class="s4-tag">Live Marketplace</div>
+          <div class="s4-name display">WHAT&shy;NOT</div>
+          <div class="s4-desc">Fast-growing live auction marketplace. Countdown auctions, mystery box, collector focus.</div>
+          <ul class="s4-features">
+            <li>Realtime auction + mystery box</li>
+            <li>Shipping automation built-in</li>
+            <li>Seller dashboard + analytics</li>
+            <li>US + Europe growth momentum</li>
+          </ul>
+        </div>
+        <div class="s4-platform">
+          <div class="s4-tag">Gaming → Lifestyle</div>
+          <div class="s4-name display">TWITCH</div>
+          <div class="s4-desc">Amazon-owned. Expanding beyond gaming into lifestyle, outdoor, IRL content and creator shopping.</div>
+          <ul class="s4-features">
+            <li>Loyal, high-engagement audience</li>
+            <li>Monetize via subs, donations, ads</li>
+            <li>Outdoor/camping content fits</li>
+            <li>50 followers to monetize</li>
+          </ul>
+        </div>
+        <div class="s4-platform">
+          <div class="s4-tag">Realtime Social</div>
+          <div class="s4-name display">X (TWI&shy;TTER)</div>
+          <div class="s4-desc">Elon Musk's platform. Real-time, high-signal audience. Shopping features in development.</div>
+          <ul class="s4-features">
+            <li>Spaces audio live + video live</li>
+            <li>Trending/viral potential</li>
+            <li>Requires X Premium for live</li>
+            <li>Best for PR, announcements</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: VERDICT -->
+  <div class="slide" data-index="5">
+    <div class="s5">
+      <div class="s5-left">
+        <div>
+          <div class="slide-label orange">Part II — Platform Verdict</div>
+          <div class="s5-title display" style="margin-top:12px;">BEST FIT FOR <span>OUTDOOR</span> FURNITURE</div>
+        </div>
+        <div class="s5-rankings">
+          <div class="s5-rank">
+            <div class="s5-rank-num">#1</div>
+            <div class="s5-rank-content">
+              <div class="s5-rank-platform">Instagram</div>
+              <div class="s5-rank-why">Visual lifestyle content — Reels, Stories, aesthetic outdoor setups. Link in bio drives Shopify traffic. Best for brand building + impulse purchase.</div>
+            </div>
+          </div>
+          <div class="s5-rank">
+            <div class="s5-rank-num">#2</div>
+            <div class="s5-rank-content">
+              <div class="s5-rank-platform">YouTube</div>
+              <div class="s5-rank-why">Long-term trust engine. Assembly tutorials, setup guides, SEO evergreen content. Customers watching a 5-minute setup video convert at high rates.</div>
+            </div>
+          </div>
+          <div class="s5-rank">
+            <div class="s5-rank-num">#3</div>
+            <div class="s5-rank-content">
+              <div class="s5-rank-platform">TikTok</div>
+              <div class="s5-rank-why">Viral acquisition and fast product testing. High-energy live sessions for flash sales. Highest platform CVR at 4.7%.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="s5-right">
+        <div class="s5-flow">
+          <div class="s5-flow-label">Recommended Operational Flow</div>
+          <div class="s5-flow-step active">
+            <div>Instagram Live (Prime Time)</div>
+            <div class="sub">7PM–10PM EST · Human host · Visual demo · Lifestyle content</div>
+          </div>
+          <div class="s5-flow-step" style="border-left-color:var(--gray-light);">
+            <div>→ Shopify Checkout</div>
+            <div class="sub">All platforms funnel here · Email/SMS capture · Retargeting pixel fires</div>
+          </div>
+          <div class="s5-flow-step active">
+            <div>YouTube Long-form (Always-on)</div>
+            <div class="sub">Setup guides + reviews · SEO-driven · Builds authority over time</div>
+          </div>
+          <div class="s5-flow-step" style="border-left-color:var(--gray-light);">
+            <div>→ Repeat Purchase Loop</div>
+            <div class="sub">Email retargeting · Upsell accessories · Community building</div>
+          </div>
+        </div>
+        <div class="s5-niche">
+          <div class="s5-niche-label">Niche Platforms (Selective Use)</div>
+          <div class="s5-niche-text">NTWRK and Whatnot are worth testing <strong>only if</strong> Megsu launches limited-edition products or exclusive bundles. These platforms reward scarcity, not catalogue products. Do not prioritize until a clear exclusive-drop strategy exists.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: AI BUSINESS CASE -->
+  <div class="slide" data-index="6">
+    <div class="s6">
+      <div class="s6-left">
+        <div>
+          <div class="slide-label orange">Part III — AI Livestream</div>
+          <div class="s6-title display" style="margin-top:16px;">WHY <span>AI</span> LIVE&shy;STREAM? THE CASE</div>
+        </div>
+        <div class="s6-cases">
+          <div class="s6-case">
+            <div class="s6-case-logo">📱</div>
+            <div>
+              <div class="s6-case-name">Samsung × AnyLive</div>
+              <div class="s6-case-result"><strong>+4,450 hours/month</strong> of livestream across 8 countries simultaneously. Zero additional MC headcount. One-time setup.</div>
+            </div>
+          </div>
+          <div class="s6-case">
+            <div class="s6-case-logo">💧</div>
+            <div>
+              <div class="s6-case-name">Evian × AnyLive</div>
+              <div class="s6-case-result"><strong>90% reduction</strong> in cost per live production hour. Fixed SaaS vs expensive human staffing for every session.</div>
+            </div>
+          </div>
+          <div class="s6-case">
+            <div class="s6-case-logo">🇨🇳</div>
+            <div>
+              <div class="s6-case-name">Luo Yonghao × Baidu AI Avatar</div>
+              <div class="s6-case-result">13M viewers, <strong>$7.6M USD</strong> revenue in 6 hours. Asia has moved from testing to money-printing mode.</div>
+            </div>
+          </div>
+        </div>
+        <div class="s6-problem">
+          <div class="q">The Core Problem</div>
+          <p>Human hosts cannot run 24/7. Algorithms on TikTok and Amazon actively reward shops with the highest total live hours. Competitors using only humans cannot afford to keep up. <strong style="color:var(--orange);">AI fills the gap.</strong></p>
+        </div>
+      </div>
+      <div class="s6-right">
+        <div>
+          <div class="s14-roi-label mono" style="color:var(--black);opacity:0.7;font-size:10px;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;">Global Livestream Revenue 2026</div>
+          <div class="s6-big-stat">
+            <div class="num display">$1T</div>
+            <div class="label">Global Livestream Revenue 2026</div>
+          </div>
+        </div>
+        <div class="s6-stats-row">
+          <div class="s6-mini-stat">
+            <div class="n display">$68B</div>
+            <div class="l">US Live Commerce 2026</div>
+          </div>
+          <div class="s6-mini-stat">
+            <div class="n display">90%</div>
+            <div class="l">OPEX Reduction (Evian)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: IMAGINATION GAP -->
+  <div class="slide" data-index="7">
+    <div class="s7">
+      <div class="s7-left">
+        <div>
+          <div class="slide-label orange">Part III — Industry Problem</div>
+          <div class="s7-title display" style="margin-top:16px;">THE <span>IMAGINATION</span> GAP</div>
+        </div>
+        <div class="s7-definition">
+          <div class="term mono">Core Challenge — Outdoor Furniture</div>
+          <p>Customers cannot visualize how a 3D product will look, how much space it occupies, or how it interacts with light when placed in their actual outdoor space — based on a 2D white-background photo on Amazon.</p>
+        </div>
+        <div class="s7-impacts">
+          <div class="s7-impact">
+            <div class="icon">🛒</div>
+            <div class="text"><strong>High purchase hesitation</strong> — context gap creates uncertainty. Customers delay or abandon cart.</div>
+          </div>
+          <div class="s7-impact">
+            <div class="icon">↩️</div>
+            <div class="text"><strong>Elevated return rates</strong> — "Not what I imagined" is the #1 reason for outdoor furniture returns.</div>
+          </div>
+          <div class="s7-impact">
+            <div class="icon">🤝</div>
+            <div class="text"><strong>Trust requires physical proof</strong> — someone must sit in the hammock, set it up in 30s, and demonstrate the 600 lb weight limit.</div>
+          </div>
+        </div>
+      </div>
+      <div class="s7-right">
+        <div class="s7-right-top">
+          <div class="s7-gap-label mono">Gap Analysis — What Customers Need to See</div>
+          <div class="s7-gap-visual">
+            <div class="s7-gap-bar">
+              <div class="bar-label"><span>Real-space visualization</span><span class="val">CRITICAL</span></div>
+              <div class="s7-bar-track"><div class="s7-bar-fill" style="width:95%"></div></div>
+            </div>
+            <div class="s7-gap-bar">
+              <div class="bar-label"><span>Physical proof of durability</span><span class="val">CRITICAL</span></div>
+              <div class="s7-bar-track"><div class="s7-bar-fill" style="width:90%"></div></div>
+            </div>
+            <div class="s7-gap-bar">
+              <div class="bar-label"><span>Setup time demonstration</span><span class="val">HIGH</span></div>
+              <div class="s7-bar-track"><div class="s7-bar-fill" style="width:80%"></div></div>
+            </div>
+            <div class="s7-gap-bar">
+              <div class="bar-label"><span>Outdoor lifestyle context</span><span class="val">HIGH</span></div>
+              <div class="s7-bar-track"><div class="s7-bar-fill" style="width:75%"></div></div>
+            </div>
+            <div class="s7-gap-bar">
+              <div class="bar-label"><span>Material texture &amp; quality</span><span class="val">MEDIUM</span></div>
+              <div class="s7-bar-track"><div class="s7-bar-fill" style="width:60%"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="s7-right-bottom">
+          <div class="s7-conclusion">AI cannot sit in a hammock. <span>AI cannot solve the physical gap alone.</span> But AI can run the store 24/7 while humans create the proof content that closes the sale.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: COMPARISON -->
+  <div class="slide" data-index="8">
+    <div class="s8">
+      <div class="s8-header">
+        <div>
+          <div class="slide-label orange">Part III — Platform Comparison</div>
+          <div class="s8-title display" style="margin-top:12px;">ANYLIVE <span>VS THE FIELD</span></div>
+        </div>
+        <div class="slide-label" style="text-align:right;">5 AI platforms evaluated</div>
+      </div>
+      <div class="s8-body">
+        <div class="s8-platform winner">
+          <div class="s8-winner-tag mono">Recommended</div>
+          <div class="s8-p-name display">ANY&shy;LIVE</div>
+          <div class="s8-verdict good">★ Best for US Market</div>
+          <ul class="s8-points">
+            <li>Amazon Live native integration</li>
+            <li>AnyX omnichannel inventory sync</li>
+            <li>RTMP multi-platform (Amazon+TikTok+YT+FB+IG)</li>
+            <li>24/7 cloud-stable, no hardware needed</li>
+            <li>LLM with RAG guardrails</li>
+            <li>AnyLogi for logistics sync</li>
+            <li>Enterprise-grade, mid-to-large scale</li>
+          </ul>
+        </div>
+        <div class="s8-platform">
+          <div class="s8-p-name display">SYNTOPIA</div>
+          <div class="s8-verdict mid">◎ Beginner-Friendly</div>
+          <ul class="s8-points">
+            <li>4-step quick setup</li>
+            <li>100+ avatar library</li>
+            <li>Keyword-based automation</li>
+            <li>TikTok, Shopee, Lazada only</li>
+            <li>No Amazon Live integration</li>
+            <li>Limited flexibility for US market</li>
+          </ul>
+        </div>
+        <div class="s8-platform">
+          <div class="s8-p-name display">BOCA&shy;LIVE</div>
+          <div class="s8-verdict mid">◎ Strong TikTok US</div>
+          <ul class="s8-points">
+            <li>Deep TikTok Shop US/UK cart sync</li>
+            <li>AI commerce engine, strong rebuttal</li>
+            <li>Direct cart integration</li>
+            <li>Limited to TikTok + Taobao + YT</li>
+            <li>No Amazon Live support</li>
+            <li>Narrow ecosystem</li>
+          </ul>
+        </div>
+        <div class="s8-platform">
+          <div class="s8-p-name display">ILIVE</div>
+          <div class="s8-verdict low">○ SEA-Focused</div>
+          <ul class="s8-points">
+            <li>Vietnam-built platform</li>
+            <li>Solid for Shopee/Lazada/TikTok SEA</li>
+            <li>Smart comment interaction</li>
+            <li>AI video production</li>
+            <li>Limited US market reach</li>
+            <li>No Amazon Live integration</li>
+          </ul>
+        </div>
+        <div class="s8-platform">
+          <div class="s8-p-name display">VLIVE.AI</div>
+          <div class="s8-verdict low">○ SEA Multi-Room</div>
+          <ul class="s8-points">
+            <li>Batch streaming (multiple rooms)</li>
+            <li>HD 1080p, ms lip-sync</li>
+            <li>Shopee, Lazada, TikTok only</li>
+            <li>No Amazon Live support</li>
+            <li>No US-market logistics integration</li>
+            <li>Best for SEA volume plays</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: TECH DEEP DIVE -->
+  <div class="slide" data-index="9">
+    <div class="s9">
+      <div class="s9-left">
+        <div>
+          <div class="slide-label orange">Part III — Technology</div>
+          <div class="s9-title display" style="margin-top:16px;">ANYLIVE <span>TECH</span> DEEP DIVE</div>
+        </div>
+        <div class="s9-score-card">
+          <div class="s9-score-label mono">Capability Ratings</div>
+          <div class="s9-scores">
+            <div class="s9-score-item">
+              <span class="s9-score-name">Multistream Infrastructure</span>
+              <span class="s9-score-val">9.5/10</span>
+            </div>
+            <div class="s9-score-bar"><div class="s9-score-fill" style="width:95%"></div></div>
+            <div class="s9-score-item">
+              <span class="s9-score-name">LLM + RAG Guardrails</span>
+              <span class="s9-score-val">9/10</span>
+            </div>
+            <div class="s9-score-bar"><div class="s9-score-fill" style="width:90%"></div></div>
+            <div class="s9-score-item">
+              <span class="s9-score-name">Inventory Sync (AnyX)</span>
+              <span class="s9-score-val">9/10</span>
+            </div>
+            <div class="s9-score-bar"><div class="s9-score-fill" style="width:90%"></div></div>
+            <div class="s9-score-item">
+              <span class="s9-score-name">Analytics & Script Optimization</span>
+              <span class="s9-score-val">8.5/10</span>
+            </div>
+            <div class="s9-score-bar"><div class="s9-score-fill" style="width:85%"></div></div>
+            <div class="s9-score-item">
+              <span class="s9-score-name">Avatar Hyper-Realism</span>
+              <span class="s9-score-val">6.5/10</span>
+            </div>
+            <div class="s9-score-bar"><div class="s9-score-fill" style="width:65%"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="s9-right">
+        <div class="s9-feature">
+          <div class="s9-feature-icon">🌐</div>
+          <div class="s9-feature-name">Multistream RTMP</div>
+          <div class="s9-feature-desc">Simultaneous live to <strong>Amazon, TikTok, YouTube, Facebook, Instagram</strong> from one session. One cost, maximum reach.</div>
+        </div>
+        <div class="s9-feature">
+          <div class="s9-feature-icon">🧠</div>
+          <div class="s9-feature-name">LLM + RAG Guardrails</div>
+          <div class="s9-feature-desc">AI only answers from <strong>whitelisted FAQ</strong>. Never improvises specs. Critical for product liability — 600 lbs limit is locked.</div>
+        </div>
+        <div class="s9-feature">
+          <div class="s9-feature-icon">📦</div>
+          <div class="s9-feature-name">AnyX Inventory Sync</div>
+          <div class="s9-feature-desc"><strong>Real-time sync</strong> between Amazon MCF and TikTok Shop. Safety buffer prevents overselling during live surges.</div>
+        </div>
+        <div class="s9-feature">
+          <div class="s9-feature-icon">🎙️</div>
+          <div class="s9-feature-name">Multilingual TTS</div>
+          <div class="s9-feature-desc">English, Vietnamese, Spanish, Thai with <strong>local accents</strong>. Instant language switching — AU + Spanish US expansion ready.</div>
+        </div>
+        <div class="s9-feature">
+          <div class="s9-feature-icon">📊</div>
+          <div class="s9-feature-name">AI Analytics & Script Opt.</div>
+          <div class="s9-feature-desc">Identifies <strong>which keywords and phrases</strong> drive the most conversions. LLM auto-rewrites scripts for next session.</div>
+        </div>
+        <div class="s9-feature">
+          <div class="s9-feature-icon">☁️</div>
+          <div class="s9-feature-name">Cloud-Hosted 24/7</div>
+          <div class="s9-feature-desc">No local hardware required. <strong>20-24 hours/day</strong> stability, zero RAM overflow. Scales to any number of concurrent rooms.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: HYBRID MODEL -->
+  <div class="slide" data-index="10">
+    <div class="s10">
+      <div class="s10-header">
+        <div class="slide-label orange">Part III — Operating Model</div>
+        <div class="s10-title display" style="margin-top:12px;">THE <span>HYBRID MODEL</span><br>HUMAN + AI IN ACTION</div>
+      </div>
+      <div class="s10-body">
+        <div class="s10-timeline">
+          <div class="s10-time-block prime">
+            <div class="s10-time-tag p mono">Prime Time</div>
+            <div class="s10-time-hours display">7PM–10PM</div>
+            <div class="s10-time-who">Human Host</div>
+            <div class="s10-time-desc">Drives energy, builds trust, demonstrates product physically. Sits in the hammock. Sets it up in 30 seconds. This is where conversion happens — the human element is non-negotiable for outdoor furniture.</div>
+          </div>
+          <div class="s10-time-block">
+            <div class="s10-time-tag o mono">Off-Peak — Night Shift</div>
+            <div class="s10-time-hours display">21 hrs/day</div>
+            <div class="s10-time-who">AI Avatar</div>
+            <div class="s10-time-desc">Maintains 24/7 presence. Answers FAQs on weight limits, shipping, warranty. Reads promo codes. Keeps algorithm satisfied with live hours. Captures late-night US buyers and morning AU traffic.</div>
+          </div>
+        </div>
+        <div class="s10-right">
+          <div class="s10-rule">
+            <div class="r-label mono">The Golden Rule</div>
+            <div class="r-text">AI handles machine tasks.<br>Humans handle human moments.</div>
+          </div>
+          <div class="s10-format">
+            <div class="s10-format-label mono">Split-Screen Format</div>
+            <div class="s10-screen">
+              <div class="s10-screen-ai">
+                <div class="emoji">🤖</div>
+                <div class="ai-label mono">AI MC Corner</div>
+                <div style="font-size:9px;color:var(--gray-light);text-align:center;margin-top:4px;">Reads specs<br>Handles FAQs</div>
+              </div>
+              <div class="s10-screen-human">
+                <div class="h-label mono">Main Screen — Hero Content</div>
+                <div class="h-text">Human B-Roll</div>
+                <div class="h-sub">Person setting up hammock at beach · Outdoor lifestyle · Real interaction</div>
+              </div>
+            </div>
+          </div>
+          <div class="s10-result">
+            <strong>Result:</strong> Always-on sales presence at a fraction of traditional staffing cost. The visual trust gap is solved by human B-roll. The coverage gap is solved by AI. No compromise on either.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: USE CASES -->
+  <div class="slide" data-index="11">
+    <div class="s11">
+      <div class="s11-header">
+        <div>
+          <div class="slide-label orange">Part III — Use Case Framework</div>
+          <div class="s11-title display" style="margin-top:12px;">WHAT AI <span>DOES</span> —<br>AND <span>DOESN'T DO</span></div>
+        </div>
+        <div class="slide-label" style="text-align:right;">12 use cases evaluated</div>
+      </div>
+      <div class="s11-body">
+        <div class="s11-zone invest">
+          <div class="s11-zone-tag mono">Invest Now</div>
+          <div class="s11-zone-title">Green Light</div>
+          <ul class="s11-items">
+            <li>24/7 AI Livestream (off-peak coverage)</li>
+            <li>Human-to-AI Handover (night shift model)</li>
+            <li>FAQ Automation (weight, shipping, warranty)</li>
+            <li>AI Analytics + Script Optimization</li>
+            <li>Multilingual expansion (AUS + Spanish US)</li>
+          </ul>
+        </div>
+        <div class="s11-zone care">
+          <div class="s11-zone-tag mono">Use with Care</div>
+          <div class="s11-zone-title">Yellow Light</div>
+          <ul class="s11-items">
+            <li>AI Sales Assistant (urgency tactics — moderate frequency only)</li>
+            <li>Seasonal backgrounds (autumn camping, summer beach)</li>
+            <li>AI Retargeting — clip live segments to Reels/Shorts for Meta ads</li>
+          </ul>
+        </div>
+        <div class="s11-zone avoid">
+          <div class="s11-zone-tag mono">Absolute Avoid</div>
+          <div class="s11-zone-title">Red Light</div>
+          <ul class="s11-items">
+            <li>AI faking product assembly or setup demo</li>
+            <li>UGC-style deception (AI pretending to be customer)</li>
+            <li>AI as brand founder / lifestyle storyteller</li>
+            <li>AI improvising product specs (liability risk)</li>
+          </ul>
+        </div>
+        <div class="s11-zone invest">
+          <div class="s11-zone-tag mono">AI MC + Human B-Roll</div>
+          <div class="s11-zone-title">Core Format</div>
+          <ul class="s11-items">
+            <li>Split-screen: AI corner + human main screen</li>
+            <li>AI reads specs while human demonstrates</li>
+            <li>Solves the physical trust gap completely</li>
+            <li>Compliant with all platform AIGC policies</li>
+          </ul>
+        </div>
+        <div class="s11-zone care">
+          <div class="s11-zone-tag mono">Future Opportunity</div>
+          <div class="s11-zone-title">Longer Term</div>
+          <ul class="s11-items">
+            <li>Australia market — AI in English + local accent</li>
+            <li>Spanish US community expansion</li>
+            <li>Multi-room batch streaming for peak sale events</li>
+          </ul>
+        </div>
+        <div class="s11-zone avoid">
+          <div class="s11-zone-tag mono">Product Liability</div>
+          <div class="s11-zone-title">Sacred Rule</div>
+          <ul class="s11-items">
+            <li>AI must NEVER claim specs beyond 600 lbs whitelisted limit</li>
+            <li>Any out-of-scope question → "Please contact our team"</li>
+            <li>RAG guardrails non-negotiable before deployment</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: TRUST CLIFF -->
+  <div class="slide" data-index="12">
+    <div class="s12">
+      <div class="s12-left">
+        <div>
+          <div class="slide-label orange">Part III — Consumer Psychology</div>
+          <div class="s12-title display" style="margin-top:16px;">THE AI <span>TRUST</span> CLIFF</div>
+        </div>
+        <div class="s12-stats">
+          <div class="s12-stat">
+            <div class="pct display">78%</div>
+            <div class="desc"><strong>Of Americans use AI tools daily</strong> — adoption is real and growing. The barrier is not awareness.</div>
+          </div>
+          <div class="s12-stat dim">
+            <div class="pct display">14%</div>
+            <div class="desc"><strong>Fully trust AI recommendations</strong> without cross-verification. The trust gap is massive.</div>
+          </div>
+          <div class="s12-stat">
+            <div class="pct display">75%</div>
+            <div class="desc"><strong>Will immediately lose trust</strong> if AI content is undisclosed or appears ad-influenced without transparency.</div>
+          </div>
+        </div>
+      </div>
+      <div class="s12-right">
+        <div class="s12-barrier">
+          <div class="s12-barrier-label mono">Physical Validation Barriers</div>
+          <div class="s12-barrier-items">
+            <div class="s12-barrier-item critical">Outdoor furniture requires someone to physically sit, assemble, and demonstrate. No avatar can replace this. The tactile gap is real and it must be closed by humans.</div>
+            <div class="s12-barrier-item">AI Holdouts (Gen X/Boomers) are extremely sensitive to high-pressure AI sales tactics. Aggressive urgency from an avatar will drive this segment away permanently.</div>
+            <div class="s12-barrier-item">Uncanny Valley risk: an avatar repeating the same gestures for 10 hours with empty eyes damages brand perception. AI must be used in limited, purposeful moments.</div>
+            <div class="s12-barrier-item">AI Enthusiasts (Gen Z) tolerate AI but aggressively reject "AI slop" — low-quality automated content. High production standard is non-negotiable even for AI sessions.</div>
+          </div>
+        </div>
+        <div class="s12-strategy">
+          <div class="s-label mono">The Only Viable Strategy</div>
+          <div class="s-text">Radical Transparency. Label all AI content. Let humans be the hero. AI stays permanently in the support role — never center stage.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: RISKS -->
+  <div class="slide" data-index="13">
+    <div class="s13">
+      <div class="s13-header">
+        <div class="slide-label orange">Part III — Risk Management</div>
+        <div class="s13-title display" style="margin-top:12px;">5 LAND <span>MINES</span> —<br>RISK &amp; MITIGATION PLAN</div>
+      </div>
+      <div class="s13-body">
+        <div class="s13-risk">
+          <div class="s13-risk-num mono">01 / 05</div>
+          <div class="s13-risk-level critical">Critical</div>
+          <div class="s13-risk-name">Platform Policy Violation</div>
+          <div class="s13-risk-issue">Amazon Agent Policy (4/3/2026): AI agents must be transparent, respect rate limits, and have an immediate Kill Switch. TikTok: AIGC label is mandatory, static content >50% screen = banned.</div>
+          <div class="s13-risk-fix"><strong>Fix:</strong> Never run full auto-pilot. Always enable AIGC labels. Require AnyMind to confirm Kill Switch compliance before contract signing.</div>
+        </div>
+        <div class="s13-risk">
+          <div class="s13-risk-num mono">02 / 05</div>
+          <div class="s13-risk-level high">High</div>
+          <div class="s13-risk-name">Product Liability (AI Hallucination)</div>
+          <div class="s13-risk-issue">If AI tells a customer the hammock supports 1000 lbs and an injury results, Megsu and AnyMind face joint legal liability under the AI LEAD Act and evolving US Product Liability law.</div>
+          <div class="s13-risk-fix"><strong>Fix:</strong> Lock RAG to whitelisted FAQ only. Any out-of-spec question: "Please contact our team." 600 lbs limit is the hard ceiling — no exceptions.</div>
+        </div>
+        <div class="s13-risk">
+          <div class="s13-risk-num mono">03 / 05</div>
+          <div class="s13-risk-level critical">Critical</div>
+          <div class="s13-risk-name">Logistics Desync → Overselling</div>
+          <div class="s13-risk-issue">TikTok Shop mandates its own logistics system (Feb 2026). API latency between Amazon MCF, AnyX, and TikTok Shop during a live surge can cause overselling and account penalties.</div>
+          <div class="s13-risk-fix"><strong>Fix:</strong> Safety buffer — if real stock = 500, API shows 400. AnyLogi must connect Amazon MCF ↔ TikTok Shop seamlessly before go-live.</div>
+        </div>
+        <div class="s13-risk">
+          <div class="s13-risk-num mono">04 / 05</div>
+          <div class="s13-risk-level high">High</div>
+          <div class="s13-risk-name">Uncanny Valley Trust Erosion</div>
+          <div class="s13-risk-issue">75% of Americans lose trust immediately when AI is not transparent. An avatar repeating the same gestures for 10 hours with vacant eyes actively damages Megsu's brand equity.</div>
+          <div class="s13-risk-fix"><strong>Fix:</strong> AI stays in corner only. Real human B-roll must dominate the main screen. Dynamic scene switching to prevent static content flags.</div>
+        </div>
+        <div class="s13-risk">
+          <div class="s13-risk-num mono">05 / 05</div>
+          <div class="s13-risk-level medium">Medium</div>
+          <div class="s13-risk-name">AI Fatigue</div>
+          <div class="s13-risk-issue">Audiences increasingly scroll past AI streams. The lack of human unpredictability and emotional peaks causes drop-off during extended sessions.</div>
+          <div class="s13-risk-fix"><strong>Fix:</strong> Human host injects energy and emotion at prime time. AI handles overnight only. Never rely on AI alone for peak conversion sessions.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: OMNICHANNEL MATRIX -->
+  <div class="slide" data-index="14">
+    <div class="s-omni">
+      <div class="s-omni-header">
+        <div>
+          <div class="slide-label orange">Part III — Platform Strategy</div>
+          <div class="s-omni-title display" style="margin-top:12px;">OMNICHANNEL <span>COMPATIBILITY</span><br>MATRIX</div>
+        </div>
+        <div class="slide-label" style="text-align:right;">4 platforms · AnyLive strategy per channel</div>
+      </div>
+      <div class="s-omni-body">
+        <div class="s-omni-platform">
+          <div class="s-omni-p-name display">AMAZON LIVE</div>
+          <div class="s-omni-fit mid-high">Medium–High Fit</div>
+          <div class="s-omni-section">
+            <div class="s-omni-section-label">Algorithm</div>
+            <div class="s-omni-section-text"><strong>Extreme high-intent.</strong> Live viewers are 17× more likely to purchase. Purely commercial environment.</div>
+          </div>
+          <div class="s-omni-section">
+            <div class="s-omni-risk-tag critical">Risk: Critical</div>
+            <div class="s-omni-section-text">BSA update 4/3/2026: "Agent Policy" — AI must be identified, respect API rate limits, and have <strong>Kill Switch</strong> for immediate shutdown.</div>
+          </div>
+          <div class="s-omni-section">
+            <div class="s-omni-section-label">AnyLive Strategy</div>
+            <div class="s-omni-section-text">Push 24/7 stream to Storefront. Focus on <strong>FAQ automation</strong> (specs, shipping). AnyX must maintain valid API call frequency.</div>
+          </div>
+        </div>
+        <div class="s-omni-platform">
+          <div class="s-omni-p-name display">TIKTOK SHOP US</div>
+          <div class="s-omni-fit very-high">Very High Fit</div>
+          <div class="s-omni-section">
+            <div class="s-omni-section-label">Algorithm</div>
+            <div class="s-omni-section-text"><strong>Born for shoppertainment.</strong> 24/7 live rewards visibility. But TikTok aggressively scans for <strong>unoriginal/static content.</strong></div>
+          </div>
+          <div class="s-omni-section">
+            <div class="s-omni-risk-tag critical">Risk: Critical</div>
+            <div class="s-omni-section-text">AIGC label <strong>mandatory</strong>. Static content >50% screen = "0-view jail". From 2/2026: forced TikTok Logistics Services.</div>
+          </div>
+          <div class="s-omni-section">
+            <div class="s-omni-section-label">AnyLive Strategy</div>
+            <div class="s-omni-section-text">Enable AIGC Disclosure. <strong>Dynamic scene switching</strong> to prevent static flags. AnyLogi integration for new logistics mandate.</div>
+          </div>
+        </div>
+        <div class="s-omni-platform">
+          <div class="s-omni-p-name display">YOUTUBE LIVE</div>
+          <div class="s-omni-fit high">High Fit</div>
+          <div class="s-omni-section">
+            <div class="s-omni-section-label">Algorithm</div>
+            <div class="s-omni-section-text"><strong>Watch time + consistency.</strong> Ideal for how-to and long-form demo content. Viewers seek depth on setup/installation.</div>
+          </div>
+          <div class="s-omni-section">
+            <div class="s-omni-risk-tag low">Risk: Low</div>
+            <div class="s-omni-section-text">YouTube is flexible with AI content as long as it provides <strong>educational value</strong> and no deepfake deception.</div>
+          </div>
+          <div class="s-omni-section">
+            <div class="s-omni-section-label">AnyLive Strategy</div>
+            <div class="s-omni-section-text">"24/7 Outdoor Relaxing Vibes" stream (Lofi Girl model). AI Host tư vấn periodically. <strong>YouTube Shopping</strong> for in-stream checkout.</div>
+          </div>
+        </div>
+        <div class="s-omni-platform">
+          <div class="s-omni-p-name display">META LIVE</div>
+          <div class="s-omni-fit medium">Medium Fit</div>
+          <div class="s-omni-section">
+            <div class="s-omni-section-label">Algorithm</div>
+            <div class="s-omni-section-text"><strong>Awareness + Retargeting.</strong> Declining interaction, older demographic (Gen X, Millennials). Lower direct conversion than TikTok/Amazon.</div>
+          </div>
+          <div class="s-omni-section">
+            <div class="s-omni-risk-tag critical">Risk: Medium</div>
+            <div class="s-omni-section-text">Must tag "AI-generated" or "Made with AI" via platform tools. Failure results in <strong>reduced visibility.</strong></div>
+          </div>
+          <div class="s-omni-section">
+            <div class="s-omni-section-label">AnyLive Strategy</div>
+            <div class="s-omni-section-text">Leverage existing Page followers. Use live as <strong>lead generation funnel</strong> → redirect traffic to Amazon/Shopify for checkout.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 15: VERDICT -->
+  <div class="slide" data-index="15">
+    <div class="s14">
+      <div class="s14-left">
+        <div>
+          <div class="slide-label orange">Part III — Strategic Verdict</div>
+          <div class="s14-title display" style="margin-top:16px;">SHOULD MEGSU <span>DEPLOY</span> ANYLIVE?</div>
+          <div class="s14-answer">
+            <div class="a-label mono">The Answer</div>
+            <div class="a-text">Yes — As Automated Sales Infrastructure. Not as Human Replacement.</div>
+          </div>
+        </div>
+        <div class="s14-qs">
+          <div class="s14-q">
+            <div>
+              <div class="s14-q-text"><strong>Biggest Opportunity</strong>Dominate off-peak hours. Algorithms reward 24/7 live presence. Competitors using human hosts cannot afford to match this at scale.</div>
+            </div>
+            <div class="s14-q-tag big">BIG</div>
+          </div>
+          <div class="s14-q">
+            <div>
+              <div class="s14-q-text"><strong>Biggest Risk</strong>Platform compliance. One wrong setup = permanent ban on Amazon or TikTok. This is an existential risk, not an operational inconvenience.</div>
+            </div>
+            <div class="s14-q-tag risk">RISK</div>
+          </div>
+          <div class="s14-q">
+            <div>
+              <div class="s14-q-text"><strong>Outdoor Niche Fit</strong>Viable only with mandatory human B-roll as hero content. AI in supporting role only. Authenticity is the category's core purchase driver.</div>
+            </div>
+            <div class="s14-q-tag mid">SELECTIVE</div>
+          </div>
+        </div>
+      </div>
+      <div class="s14-right">
+        <div>
+          <div class="s14-roi-label mono">OPEX Reduction Potential</div>
+          <div class="s14-roi-num display">90%</div>
+          <div class="s14-roi-sub">Cost reduction on livestream production vs. full human team</div>
+        </div>
+        <div class="s14-conditions">
+          <div class="s14-condition">✓ Fixed SaaS cost vs. tens of thousands in human staffing per month</div>
+          <div class="s14-condition">✓ Mid-to-Enterprise scale — perfect fit for Megsu's multi-channel ambition</div>
+          <div class="s14-condition">✓ AnyX ecosystem solves the complex omnichannel inventory problem</div>
+          <div class="s14-condition">✗ Only if compliance setup is done correctly from day one</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: NEXT STEPS -->
+  <div class="slide" data-index="16">
+    <div class="s15">
+      <div class="s15-left">
+        <div>
+          <div class="slide-label orange">Strategic Recommendation</div>
+          <div class="s15-title display" style="margin-top:16px;">THE RECOM&shy;MENDATION &amp; <span>NEXT STEPS</span></div>
+        </div>
+        <div style="font-size:13px;color:var(--gray-light);line-height:1.8;margin-top:20px;">
+          Sign AnyLive — but with the right mental model: <strong style="color:var(--white);">"Use AI to do machine tasks. Use humans to do human things."</strong>
+        </div>
+        <div class="s15-contact">
+          <div class="c-label mono">Prepared By</div>
+          <div class="c-name">Đoàn Quốc Vinh</div>
+          <div class="c-email mono">vinhdoan@behmd.com</div>
+        </div>
+      </div>
+      <div class="s15-right">
+        <div class="s15-step">
+          <div class="s15-step-num display">01</div>
+          <div class="s15-step-content">
+            <div class="s15-step-action">Sign AnyLive Contract</div>
+            <div class="s15-step-desc">Scope: automation infrastructure only, not human replacement. Include Kill Switch compliance and RAG guardrail requirements in contract terms.</div>
+          </div>
+        </div>
+        <div class="s15-step">
+          <div class="s15-step-num display">02</div>
+          <div class="s15-step-content">
+            <div class="s15-step-action">Implement Hybrid Model</div>
+            <div class="s15-step-desc">Human-to-AI Handover from day one. Prime time human, off-peak AI. Build B-roll library of real product demos before launch.</div>
+          </div>
+        </div>
+        <div class="s15-step">
+          <div class="s15-step-num display">03</div>
+          <div class="s15-step-content">
+            <div class="s15-step-action">Enable 100% AIGC Labels</div>
+            <div class="s15-step-desc">Non-negotiable across all US platforms from day one. Transparency protects Megsu's brand and prevents algorithm penalties.</div>
+          </div>
+        </div>
+        <div class="s15-step">
+          <div class="s15-step-num display">04</div>
+          <div class="s15-step-content">
+            <div class="s15-step-action">Deploy AnyX Inventory Sync</div>
+            <div class="s15-step-desc">Real-time sync: Amazon MCF ↔ TikTok Shop. Safety buffer set before any live session goes live. AnyLogi integration verified.</div>
+          </div>
+        </div>
+        <div class="s15-step">
+          <div class="s15-step-num display">05</div>
+          <div class="s15-step-content">
+            <div class="s15-step-action">30-Day Off-Peak Pilot</div>
+            <div class="s15-step-desc">Test AI on off-peak hours only before full rollout. Measure, learn, then scale. No full automation until compliance is confirmed stable.</div>
+          </div>
+        </div>
+        <div class="s15-metrics">
+          <div class="s15-metrics-label mono">Success Metrics</div>
+          <div class="s15-metrics-list">
+            <div class="s15-metric">Cost / Live Hour</div>
+            <div class="s15-metric">Conversion Rate</div>
+            <div class="s15-metric">Account Compliance</div>
+            <div class="s15-metric">GMV Lift</div>
+            <div class="s15-metric">Off-Peak Traffic</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <button onclick="changeSlide(-1)">← PREV</button>
+  <div class="nav-dots" id="navDots"></div>
+  <div class="nav-counter" id="navCounter">01 / 17</div>
+  <button onclick="changeSlide(1)">NEXT →</button>
+</nav>
+
+<script>
+  // ========= SMOOTH CURSOR WITH LERP =========
+  const cursor = document.getElementById('cursor');
+  let mouseX = 0, mouseY = 0, curX = 0, curY = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  function animateCursor() {
+    curX += (mouseX - curX) * 0.15;
+    curY += (mouseY - curY) * 0.15;
+    cursor.style.left = curX + 'px';
+    cursor.style.top = curY + 'px';
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  // Cursor grow on interactive elements
+  document.querySelectorAll('button, .nav-dot, .s5-rank, .s14-q, .s3-platform, .s4-platform, .s8-platform, .s13-risk, .s-omni-platform, .s15-step, .s11-zone').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('grow'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('grow'));
+  });
+
+  // ========= SLIDES =========
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+  let isTransitioning = false;
+
+  const dotsContainer = document.getElementById('navDots');
+  const counter = document.getElementById('navCounter');
+  const progress = document.getElementById('progress');
+  const slideNum = document.getElementById('slideNum');
+
+  // Build dots
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsContainer.appendChild(d);
+  }
+
+  function resetAnimations(slide) {
+    const anims = slide.querySelectorAll('.anim-in');
+    anims.forEach(el => {
+      el.style.animation = 'none';
+      el.offsetHeight; // trigger reflow
+      el.style.animation = '';
+    });
+  }
+
+  function goTo(n) {
+    if (n === current || isTransitioning) return;
+    isTransitioning = true;
+
+    slides[current].classList.remove('active');
+    document.querySelectorAll('.nav-dot')[current].classList.remove('active');
+    current = Math.max(0, Math.min(n, total - 1));
+    
+    resetAnimations(slides[current]);
+    slides[current].classList.add('active');
+    document.querySelectorAll('.nav-dot')[current].classList.add('active');
+    
+    const num = String(current + 1).padStart(2, '0');
+    counter.textContent = num + ' / ' + String(total).padStart(2, '0');
+    slideNum.innerHTML = '<span>' + num + '</span> / ' + String(total).padStart(2, '0');
+    progress.style.width = ((current + 1) / total * 100) + '%';
+
+    setTimeout(() => { isTransitioning = false; }, 650);
+  }
+
+  function changeSlide(dir) {
+    const next = current + dir;
+    if (next >= 0 && next < total) goTo(next);
+  }
+
+  // ========= KEYBOARD =========
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); changeSlide(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); changeSlide(-1); }
+    if (e.key === 'Home') goTo(0);
+    if (e.key === 'End') goTo(total - 1);
+  });
+
+  // ========= SCROLL / WHEEL NAVIGATION =========
+  let scrollAccum = 0;
+  const SCROLL_THRESHOLD = 50;
+
+  document.addEventListener('wheel', e => {
+    e.preventDefault();
+    scrollAccum += e.deltaY;
+    if (Math.abs(scrollAccum) >= SCROLL_THRESHOLD) {
+      changeSlide(scrollAccum > 0 ? 1 : -1);
+      scrollAccum = 0;
+    }
+  }, { passive: false });
+
+  // ========= TOUCH / SWIPE =========
+  let touchStartX = 0, touchStartY = 0;
+
+  document.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].screenX - touchStartX;
+    const dy = e.changedTouches[0].screenY - touchStartY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 60) {
+      changeSlide(dx < 0 ? 1 : -1);
+    } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 60) {
+      changeSlide(dy < 0 ? 1 : -1);
+    }
+  }, { passive: true });
+
+  // ========= AMBIENT PARTICLES =========
+  const particlesContainer = document.getElementById('particles');
+  const PARTICLE_COUNT = 15;
+
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    p.style.width = (1 + Math.random() * 2) + 'px';
+    p.style.height = p.style.width;
+    p.style.opacity = 0;
+    particlesContainer.appendChild(p);
+  }
+
+  // ========= INIT =========
+  goTo(0);
+  // Force first slide visible immediately
+  slides[0].classList.add('active');
+  isTransitioning = false;
+</script>
+</body>
+</html>
