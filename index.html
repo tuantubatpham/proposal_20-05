@@ -131,7 +131,7 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 100px 5%;
+            padding: 40px 4%;
         }
 
         .grid-2 {
@@ -143,12 +143,13 @@
         .grid-3 {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+            gap: 18px;
         }
 
         .fade-up {
-            opacity: 0;
-            transform: translateY(40px);
+            /* Keep content visible if JS fails; GSAP will animate from hidden->visible when available */
+            opacity: 1;
+            transform: none;
         }
 
         /* Tables */
@@ -163,7 +164,7 @@
 
         table {
             width: 100%;
-            min-width: 800px;
+            min-width: 0;
             border-collapse: collapse;
             text-align: left;
         }
@@ -187,7 +188,7 @@
 
         /* HERO */
         .hero {
-            height: 100vh;
+            min-height: 65vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -195,6 +196,257 @@
             text-align: center;
             position: relative;
             padding: 0 5%;
+        }
+
+        /* TABLE OF CONTENTS (TOC) - enhanced visual */
+        .toc-section {
+            padding: 8px 4%;
+            display: flex;
+            justify-content: center;
+            background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            margin-top: -36px; /* pull TOC closer to hero */
+            z-index: 30;
+        }
+
+        .toc-card {
+            max-width: 1140px;
+            width: 100%;
+            border-radius: 22px;
+            padding: 26px 28px; /* bigger card */
+            display: flex;
+            gap: 28px;
+            align-items: center;
+            background: linear-gradient(90deg, rgba(8,8,12,0.75), rgba(20,20,26,0.5));
+            border: 1px solid rgba(255,255,255,0.04);
+            box-shadow: 0 28px 90px rgba(0,0,0,0.85);
+            position: relative;
+            overflow: hidden;
+            transition: transform 220ms ease, box-shadow 200ms ease;
+        }
+
+        .toc-card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 28px 90px rgba(0,0,0,0.8); }
+
+        .toc-card::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            background: linear-gradient(90deg, rgba(56,189,248,0.08), rgba(168,85,247,0.06), rgba(16,185,129,0.06));
+            filter: blur(18px);
+            z-index: 0;
+            border-radius: 22px;
+            animation: toc-glow 6s linear infinite;
+            opacity: 0.95;
+            pointer-events: none;
+        }
+
+        @keyframes toc-glow { 0% { transform: translateX(-20%); } 50% { transform: translateX(20%); } 100% { transform: translateX(-20%); } }
+
+        .toc-left { flex: 0 0 260px; position: relative; z-index: 2; }
+
+        .toc-left h3 {
+            margin: 0 0 6px 0;
+            font-size: 1.6rem; /* larger */
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--primary), var(--ai-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1.8px;
+        }
+
+        .toc-left p { color: var(--text-muted); font-size: 0.98rem; }
+
+        .toc-list { flex: 1 1 auto; position: relative; z-index: 2; }
+
+        .toc-item {
+            display: flex;
+            gap: 14px;
+            align-items: center;
+            padding: 12px 14px;
+            border-radius: 12px;
+            transition: transform 200ms cubic-bezier(.2,.9,.2,1), background 140ms ease, box-shadow 180ms ease;
+            cursor: pointer;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.012);
+            backdrop-filter: blur(6px);
+        }
+
+        .toc-item:hover { transform: translateY(-8px); background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)); box-shadow: 0 18px 50px rgba(0,0,0,0.6); }
+
+        .toc-bullet { width: 12px; height: 12px; border-radius: 50%; flex: 0 0 14px; margin-top: 6px; background: linear-gradient(135deg, var(--primary), var(--ai-accent)); box-shadow: 0 8px 26px rgba(58,123,213,0.14); animation: toc-pulse 2000ms infinite ease-in-out; }
+
+        @keyframes toc-pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.45); opacity: .7; } 100% { transform: scale(1); opacity: 1; } }
+
+        .toc-title { font-weight: 900; color: var(--text-main); font-size: 1.12rem; }
+        .toc-desc { color: var(--text-muted); font-size: 0.98rem; }
+
+        /* initial invisible for JS reveal, but visible by default if JS fails */
+        .toc-item[data-hidden="true"] { opacity: 1; transform: none; }
+        @media (max-width: 900px) {
+            .toc-card { flex-direction: column; align-items: stretch; }
+            .toc-left { flex: none; }
+        }
+
+        /* TEAM SKILLS SECTION */
+        .skills-section {
+            padding: 48px 5%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.007), rgba(0,0,0,0.01));
+        }
+
+        .skills-header {
+            max-width: 1200px;
+            margin: 0 auto 18px auto;
+            text-align: center;
+        }
+
+        .skills-track-wrap {
+            /* make full-bleed across viewport */
+            max-width: none;
+            width: 100vw;
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw);
+            position: relative;
+            padding: 0 4vw;
+            box-sizing: border-box;
+        }
+
+        .skills-track {
+            display: flex;
+            gap: 18px;
+            overflow-x: auto;
+            padding: 12px 8px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+
+        .skills-track::-webkit-scrollbar { display: none; height: 0; }
+
+        /* Fade overlays to hint more content without showing scrollbars */
+        .skills-track-wrap::before,
+        .skills-track-wrap::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 96px;
+            pointer-events: none;
+            z-index: 4;
+        }
+
+        .skills-track-wrap::before { left: 0; background: linear-gradient(90deg, var(--bg), rgba(0,0,0,0.01)); }
+        .skills-track-wrap::after { right: 0; background: linear-gradient(270deg, var(--bg), rgba(0,0,0,0.01)); }
+        }
+
+        .skills-track.dragging { cursor: grabbing; cursor: -webkit-grabbing; }
+
+        .skill-card {
+            flex: 0 0 360px;
+            scroll-snap-align: start;
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(12,12,15,0.7), rgba(18,18,20,0.5));
+            border: 1px solid rgba(255,255,255,0.03);
+            padding: 18px;
+            box-shadow: 0 16px 50px rgba(0,0,0,0.6);
+            transition: transform 260ms ease, box-shadow 260ms ease;
+            position: relative;
+        }
+
+        .skill-card:hover { transform: translateY(-8px); box-shadow: 0 28px 70px rgba(0,0,0,0.75); }
+
+        .skill-media {
+            height: 140px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(168,85,247,0.06));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            color: var(--text-main);
+            margin-bottom: 14px;
+            text-align: center;
+        }
+
+        .skill-tag {
+            display: inline-block;
+            font-size: 1.28rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, var(--primary), var(--ai-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 6px 24px rgba(58,123,213,0.06);
+            padding: 6px 10px;
+        }
+
+        .skill-title { font-size: 0.98rem; font-weight: 800; margin-bottom: 8px; color: var(--text-main); }
+        .skill-desc { color: var(--text-muted); font-size: 0.95rem; line-height: 1.45; }
+
+        .skills-nav { position: absolute; right: 8px; top: 8px; display:flex; gap:8px; z-index:3; }
+
+        .skills-arrow { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 8px; cursor: pointer; }
+
+        @media (max-width: 900px) { .skill-card { flex: 0 0 82%; } .skill-media { height: 160px; } }
+
+        /* THANK YOU / CLOSING SECTION */
+        .thanks-section {
+            position: relative;
+            padding: 80px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        .thanks-bg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center center;
+            filter: saturate(1.05) contrast(1.02) brightness(0.5);
+            z-index: 0;
+            will-change: transform;
+            background-image: linear-gradient(180deg, rgba(10,10,12,0.35), rgba(8,8,10,0.45)), url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-attachment: fixed;
+        }
+
+        .thanks-overlay {
+            position: absolute; inset: 0; background: linear-gradient(180deg, rgba(16,24,32,0.35), rgba(4,6,8,0.55)); z-index:1;
+        }
+
+        .thanks-content {
+            position: relative; z-index: 2; max-width: 1000px; text-align: center; padding: 24px;
+        }
+
+        .thanks-content h2 {
+            font-size: clamp(2rem, 4.5vw, 3.2rem);
+            margin-bottom: 12px;
+            background: linear-gradient(90deg, var(--primary), var(--ai-accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight:900;
+        }
+
+        .thanks-content p { color: rgba(255,255,255,0.88); font-size:1.05rem; margin-bottom:18px; }
+
+        .thanks-cta { display:inline-block; padding: 12px 20px; border-radius: 999px; background: linear-gradient(90deg, var(--ai-accent), var(--primary)); color:#fff; font-weight:800; box-shadow: 0 12px 40px rgba(168,85,247,0.14); text-decoration:none; }
+
+        /* decorative particles */
+        .thanks-particle { position: absolute; width: 12px; height: 12px; border-radius: 50%; opacity: 0.85; z-index: 1; box-shadow: 0 6px 20px rgba(0,0,0,0.6); }
+        .p1 { background: rgba(56,189,248,0.9); left: 8%; top: 24%; animation: floaty 8000ms ease-in-out infinite; }
+        .p2 { background: rgba(168,85,247,0.9); right: 10%; top: 18%; width: 16px; height:16px; animation: floaty 10000ms ease-in-out infinite; }
+        .p3 { background: rgba(16,185,129,0.95); left: 60%; bottom: 22%; width: 10px; height:10px; animation: floaty 7200ms ease-in-out infinite; }
+
+        @keyframes floaty { 0% { transform: translateY(0) translateX(0) scale(1);} 50% { transform: translateY(-18px) translateX(6px) scale(1.08);} 100% { transform: translateY(0) translateX(0) scale(1);} }
+
+        @media (max-width: 900px) {
+            .thanks-section { padding: 48px 4%; min-height: 48vh; }
+            .thanks-bg { background-attachment: scroll; }
+            .p1,.p2,.p3 { display: none; }
         }
 
         .hero-bg-glow {
@@ -433,6 +685,157 @@
                 font-size: 2.2rem;
             }
         }
+        /* Interactive table styles */
+        .interactive-section {
+            padding: 40px 5%;
+        }
+
+        .interactive-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            border-radius: 20px;
+            padding: 28px;
+            border: 1px solid rgba(255,255,255,0.04);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+        }
+
+        .interactive-table .table-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .interactive-table .table-search {
+            flex: 1 1 320px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .interactive-table input[type="search"] {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.04);
+            background: rgba(255,255,255,0.02);
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .interactive-table .table-wrapper {
+            margin: 0;
+            background: transparent;
+            border: none;
+        }
+
+        .interactive-table table {
+            min-width: 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .interactive-table thead th {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(90deg, rgba(3,3,5,0.95), rgba(15,15,19,0.95));
+            backdrop-filter: blur(8px);
+            z-index: 5;
+        }
+
+        .interactive-table tbody tr {
+            transition: transform 240ms ease, background 160ms ease, box-shadow 200ms ease;
+            cursor: pointer;
+        }
+
+        .interactive-table tbody tr:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+            background: linear-gradient(90deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+        }
+
+        .row-details {
+            display: none;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.01);
+        }
+
+        .expanded + .row-details {
+            display: table-row;
+        }
+
+        /* Matrix comparison styles */
+        .matrix-section {
+            padding: 36px 5%;
+        }
+
+        .matrix-card {
+            background: linear-gradient(180deg, rgba(10,10,12,0.6), rgba(15,15,19,0.6));
+            border-radius: 18px;
+            padding: 22px;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .matrix-table .table-wrapper {
+            margin-top: 12px;
+            border-radius: 12px;
+            overflow: auto;
+        }
+
+        .matrix-table table {
+            min-width: 0;
+            font-size: 0.98rem;
+        }
+
+        .matrix-table thead th {
+            background: linear-gradient(90deg, rgba(24,24,28,0.95), rgba(12,12,16,0.95));
+            color: var(--text-main);
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .matrix-table tbody tr:nth-child(odd) td { background: rgba(255,255,255,0.01); }
+        .matrix-table tbody tr:nth-child(even) td { background: transparent; }
+
+        /* Make all tables fit container without horizontal scroll */
+        .table-wrapper { overflow-x: visible; }
+        table { table-layout: fixed; min-width: 0 !important; }
+        th, td { white-space: normal !important; word-break: break-word; hyphens: auto; }
+        @media (max-width: 900px) { table { font-size: 0.87rem; } th, td { padding: 8px 6px; } }
+
+        .refs { margin-top: 14px; color: var(--text-muted); font-size: 0.9rem; }
+        /* Highlight first column (primary criteria) */
+        thead th:first-child, tbody td:first-child {
+            background: linear-gradient(180deg, rgba(168,85,247,0.12), rgba(24,24,28,0.08));
+            color: var(--text-main);
+            font-weight: 700;
+            border-right: 1px solid rgba(255,255,255,0.04);
+            padding-left: 18px;
+        }
+
+        /* Make first column sticky for wide tables */
+        thead th:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 8;
+        }
+
+        tbody td:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 6;
+            box-shadow: 8px 0 16px rgba(0,0,0,0.45);
+        }
+
+        /* Slightly accent header cells for visual hierarchy */
+        thead th { background: linear-gradient(90deg, rgba(6,10,14,0.95), rgba(18,18,20,0.95)); }
+
+        @media (max-width: 900px) {
+            tbody td:first-child, thead th:first-child { position: static; box-shadow: none; }
+        }
     </style>
 </head>
 
@@ -441,243 +844,505 @@
     <!-- HERO -->
     <section class="hero">
         <div class="hero-bg-glow"></div>
-        <div class="hero-tag">Phần I</div>
-        <h1>HỆ THỐNG SOCIAL COMMERCE<br><span class="text-gradient">+ LIVESTREAM 2026</span></h1>
-        <p>Chiến lược bành trướng đa kênh và ứng dụng AI Commerce cho Megsu.</p>
+        <div class="hero-tag">TEAM LIVESTREAM</div>
+        <h1>KẾ HOẠCH PHÁT TRIỂN<br><span class="text-gradient">VÀ ĐỊNH HƯỚNG</span></h1>
+        <p>Chiến lược và đề xuất</p>
     </section>
 
-    <div class="container" style="padding-top: 0;">
-        <div class="grid-3">
-            <div class="card-block fade-up">
-                <h3>Amazon</h3>
-                <ul class="list-unstyled">
-                    <li><strong>Vai trò:</strong> Livestream bán hàng trên Amazon Live</li>
-                    <li><strong>Các shop tham khảo:</strong> RON, NTC, AROZU</li>
-                    <li><strong>Mục tiêu:</strong> Scale doanh số, tận dụng traffic sẵn có, đẩy trust & conversion cao.
-                    </li>
-                </ul>
+    <!-- TABLE OF CONTENTS -->
+    <section class="toc-section" aria-label="Mục lục đề xuất">
+        <div class="toc-card container glass">
+            <div class="toc-left">
+                <h3>NỘI DUNG CHÍNH</h3>
+                <p>Điều hướng nhanh tới các phần chính của đề xuất</p>
             </div>
-            <div class="card-block fade-up">
-                <h3>TikTok</h3>
-                <ul class="list-unstyled">
-                    <li><strong>Vai trò:</strong> Livestream bán hàng, Viral video, Short-form, Traffic acquisition</li>
-                    <li><strong>Mục tiêu:</strong> Viral nhanh, Kéo traffic lớn, Test sản phẩm nhanh, Chạy ads chuyển
-                        đổi.</li>
-                </ul>
-            </div>
-            <div class="card-block fade-up">
-                <h3>Facebook (FB)</h3>
-                <ul class="list-unstyled">
-                    <li><strong>Vai trò:</strong> Livestream kéo traffic, FB Ads, Gắn link về Shopify</li>
-                    <li><strong>Hoạt động:</strong> Livestream, Video, Remarketing, Traffic ads, Conversion ads</li>
-                    <li><strong>Mục tiêu:</strong> Đổ traffic về Shopify, Retarget, Scale ads system.</li>
-                </ul>
-            </div>
-            <div class="card-block fade-up">
-                <h3>Instagram (IG)</h3>
-                <ul class="list-unstyled">
-                    <li><strong>Vai trò:</strong> Livestream kéo traffic, Video content, Bài viết branding, Ads kéo về
-                        Shopify</li>
-                    <li><strong>Nội dung:</strong> Setup nội thất, Outdoor lifestyle, Camping, Decor aesthetic, Product
-                        showcase</li>
-                    <li><strong>Mục tiêu:</strong> Xây thương hiệu, Tạo trust, Kéo traffic chất lượng, Chốt đơn qua
-                        Shopify.</li>
-                </ul>
-            </div>
-            <div class="card-block fade-up">
-                <h3>YouTube</h3>
-                <ul class="list-unstyled">
-                    <li><strong>Vai trò:</strong> Livestream, Video dài, SEO content, Ads kéo traffic</li>
-                    <li><strong>Nội dung:</strong> Review, Setup guide, Installation tutorial, Long-form branding,
-                        Behind the scenes</li>
-                    <li><strong>Mục tiêu:</strong> Uy tín thương hiệu, Long-term trust, SEO bền vững, Evergreen traffic.
-                    </li>
-                </ul>
-            </div>
-            <div class="card-block fade-up" style="border-color: var(--shopify);">
-                <h3 style="color: var(--shopify);">Shopify = Trung Tâm</h3>
-                <ul class="list-unstyled">
-                    <li>Điểm checkout cuối cùng</li>
-                    <li>Website bán hàng trung tâm</li>
-                    <li>Hệ thống xử lý đơn hàng & thanh toán chính</li>
-                </ul>
-            </div>
-        </div>
+            <div class="toc-list">
+                <div class="toc-item" data-target="#platforms-summary" role="button" tabindex="0">
+                    <div class="toc-bullet" aria-hidden="true"></div>
+                    <div>
+                        <div class="toc-title">Nền tảng Livestream và kế hoạch mở rộng</div>
+                        <div class="toc-desc">Đề xuất nền tảng, cơ chế mở rộng kênh và ưu tiên.</div>
+                    </div>
+                </div>
 
-        <div class="fade-up" style="text-align: center; margin-top: 60px;">
-            <h2>CORE STRATEGY</h2>
-            <p>Tất cả social platform có nhiệm vụ: Livestream, Chạy ads, Tạo content, Kéo traffic.<br>
-                <strong>Điểm cuối: → Shopify để chốt đơn.</strong>
-            </p>
+                <div class="toc-item" data-target="#funnel-trigger" role="button" tabindex="0">
+                    <div class="toc-bullet" aria-hidden="true" style="background: linear-gradient(135deg, #a855f7, #38bdf8);"></div>
+                    <div>
+                        <div class="toc-title">AI Livestream và kế hoạch sử dụng</div>
+                        <div class="toc-desc">Ứng dụng AI, tự động hoá và kịch bản livestream.</div>
+                    </div>
+                </div>
+
+                <div class="toc-item" data-target="#core-strategy" role="button" tabindex="0">
+                    <div class="toc-bullet" aria-hidden="true" style="background: linear-gradient(135deg, #10b981, #06b6d4);"></div>
+                    <div>
+                        <div class="toc-title">Chiến lược và định hướng Team</div>
+                        <div class="toc-desc">Phân công, quy trình và KPI cho team livestream.</div>
+                    </div>
+                </div>
+            </div>
         </div>
+        <script>
+            // Small reveal + micro-interaction for Platform Logic table
+            (function(){
+                try{
+                    const pl = document.querySelector('#platform-logic .matrix-card');
+                    if(!pl) return;
+                    pl.style.opacity = '0';
+                    pl.style.transform = 'translateY(18px)';
+                    setTimeout(()=>{ pl.style.transition = 'opacity 600ms ease, transform 600ms cubic-bezier(.2,.9,.2,1)'; pl.style.opacity = '1'; pl.style.transform = 'translateY(0)'; }, 260);
+
+                    // Row hover subtle lift
+                    document.querySelectorAll('#platform-logic table tbody tr').forEach(r=>{
+                        r.style.transition = 'transform 220ms ease, box-shadow 220ms ease';
+                        r.addEventListener('mouseenter', ()=> r.style.transform='translateY(-6px)');
+                        r.addEventListener('mouseleave', ()=> r.style.transform='translateY(0)');
+                    });
+                }catch(e){ console.warn('Platform logic reveal failed', e); }
+            })();
+        </script>
+    </section>
+
+    <script>
+        (function(){
+            const items = document.querySelectorAll('.toc-item');
+            items.forEach((it, i) => {
+                // graceful reveal (will be visible by default if JS not loaded)
+                it.style.opacity = '0';
+                it.style.transform = 'translateY(12px)';
+                setTimeout(() => {
+                    it.style.transition = 'opacity 420ms ease, transform 420ms cubic-bezier(.2,.9,.2,1)';
+                    it.style.opacity = '1';
+                    it.style.transform = 'translateY(0)';
+                }, 110 * i);
+
+                function activate() {
+                    const selector = it.getAttribute('data-target');
+                    if (!selector) return;
+                    const target = document.querySelector(selector);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        // focus for accessibility without disrupting layout
+                        target.setAttribute('tabindex', '-1');
+                        target.focus({ preventScroll: true });
+                    }
+                }
+
+                it.addEventListener('click', activate);
+                it.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } });
+            });
+        })();
+    </script>
+
+
+
+    
+
+    <!-- HORIZONTAL SCROLL removed per request -->
+
+    <!-- Interactive summary table: Nền tảng livestream (từ ảnh) -->
+    <section class="interactive-section" id="platforms-summary">
+        <div class="container">
+            <div class="interactive-card">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h2 style="margin:0;">BẢNG REASEARCH NỀN TẢNG LIVESTREAM HÀNG ĐẦU HIỆN NAY</h2>
+                </div>
+
+                <div class="interactive-table" style="margin-top:18px;">
+                    <div class="table-top">
+                        <div class="table-search">
+                            <input id="platform-search" type="search" placeholder="Tìm nền tảng hoặc tính năng...">
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table id="platforms-table">
+                            <thead>
+                                <tr>
+                                    <th>Nền tảng</th>
+                                    <th>Quốc bản chính</th>
+                                    <th>Thông tin nền tảng</th>
+                                    <th>Tính năng livestream</th>
+                                    <th>Yêu cầu để livestream</th>
+                                    <th>Phù hợp bán outdoor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="data-row">
+                                    <td>NTWRK</td>
+                                    <td>Mỹ</td>
+                                    <td>Live shopping tập trung hype culture; collab brand; limited drops</td>
+                                    <td>Live drops, countdown, checkout trong app</td>
+                                    <td>Creator/brand invite hoặc approval; curated content</td>
+                                    <td>Trung bình – tốt cho outdoor premium</td>
+                                </tr>
+                                <tr class="row-details"><td colspan="6">NTWRK phù hợp cho sản phẩm premium, drops có tính sưu tầm.</td></tr>
+
+                                <tr class="data-row">
+                                    <td>eBay Live</td>
+                                    <td>Mỹ, toàn cầu</td>
+                                    <td>Marketplace live, tập trung resale & auction</td>
+                                    <td>Livestream auction, bidding realtime</td>
+                                    <td>Seller account tốt + lịch sẵn hàng + approval</td>
+                                    <td>Trung bình – mạnh cho outdoor đã qua sử dụng</td>
+                                </tr>
+                                <tr class="row-details"><td colspan="6">Tốt cho sản phẩm second-hand, collectible.</td></tr>
+
+                                <tr class="data-row">
+                                    <td>Whatnot</td>
+                                    <td>Mỹ, EU</td>
+                                    <td>Nền tảng auction live-first (collectibles, resale)</td>
+                                    <td>Auction live, chat + bid realtime, FOMO mechanics</td>
+                                    <td>Verified seller, category approval (khá strict)</td>
+                                    <td>Trung bình – hobby/collectible/vintage outdoor</td>
+                                </tr>
+                                <tr class="row-details"><td colspan="6">Phù hợp với mặt hàng sưu tập, vintage.</td></tr>
+
+                                <tr class="data-row">
+                                    <td>X (Twitter/X)</td>
+                                    <td>Mỹ, global</td>
+                                    <td>Social platform realtime, đang mở rộng video/live</td>
+                                    <td>Live video, Spaces audio, thử nghiệm monetization</td>
+                                    <td>Tài khoản premium/creator hoặc đủ điều kiện</td>
+                                    <td>Thấp – chỉ hỗ trợ branding</td>
+                                </tr>
+                                <tr class="row-details"><td colspan="6">Phù hợp PR nhanh, trend chớp nhoáng.</td></tr>
+
+                                <tr class="data-row">
+                                    <td>Twitch</td>
+                                    <td>Mỹ</td>
+                                    <td>Streaming community (gaming + lifestyle mở rộng)</td>
+                                    <td>Live chat, subscription, donation, extensions</td>
+                                    <td>Affiliate/Partner status để monetize đầy đủ</td>
+                                    <td>Thấp–trung bình (setup/outdoor niche)</td>
+                                </tr>
+                                <tr class="row-details"><td colspan="6">Tốt cho niche audience, ít phù hợp bán hàng quy mô lớn.</td></tr>
+
+                                <tr class="data-row">
+                                    <td>YouTube</td>
+                                    <td>Toàn cầu</td>
+                                    <td>Video + livestream lớn nhất; mạnh SEO & trust</td>
+                                    <td>Live stream, live shopping, replay, Super Chat</td>
+                                    <td>50+ subscribers (basic live); tuân thủ chính sách monetization</td>
+                                    <td>Rất cao – tốt nhất cho outdoor high-ticket</td>
+                                </tr>
+                                <tr class="row-details"><td colspan="6">Ưu tiên cho sản phẩm giá trị cao và nội dung dài hạn.</td></tr>
+
+                                <tr class="data-row">
+                                    <td>Instagram</td>
+                                    <td>Mỹ, global</td>
+                                    <td>Social visual platform mạnh về lifestyle</td>
+                                    <td>Live, Reels, product tagging, shopping</td>
+                                    <td>Tài khoản creator/business + tuân thủ commerce policy</td>
+                                    <td>Rất cao – hợp outdoor lifestyle</td>
+                                </tr>
+                                <tr class="row-details"><td colspan="6">Tốt cho visual-driven products, lifestyle branding.</td></tr>
+
+                                <tr class="data-row">
+                                    <td>Shopify</td>
+                                    <td>Canada, global</td>
+                                    <td>Nền tảng ecommerce owned (không phải livestream platform thuần)</td>
+                                    <td>Live shopping tích hợp (qua app/extension), checkout trực tiếp</td>
+                                    <td>Cần store Shopify + app live shopping + setup payment</td>
+                                    <td>Rất cao – backend chốt đơn outdoor</td>
+                                </tr>
+                                <tr class="row-details"><td colspan="6">Shopify là điểm chốt đơn cuối cùng, cực kỳ quan trọng.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MATRIX: LIVESTREAM BÁN NỘI THẤT & OUTDOOR (2026) -->
+    <section class="matrix-section" id="matrix-comparison">
+        <div class="container">
+            <div class="matrix-card">
+                <h2 style="margin:0 0 12px 0;">ĐÁNH GIÁ CÁC NỀN TẢNG CÓ THỂ LIVESTREAM </h2>
+                <div class="matrix-table">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tiêu chí</th>
+                                    <th>TikTok</th>
+                                    <th>YouTube</th>
+                                    <th>Instagram</th>
+                                    <th>Shopify</th>
+                                    <th>Whatnot</th>
+                                    <th>eBay</th>
+                                    <th>NTWRK</th>
+                                    <th>Twitch</th>
+                                    <th>X</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Core DNA</strong></td>
+                                    <td>Viral commerce</td>
+                                    <td>Trust + content</td>
+                                    <td>Lifestyle branding</td>
+                                    <td>Owned ecommerce</td>
+                                    <td>Live auction</td>
+                                    <td>Marketplace resale</td>
+                                    <td>Hype drops</td>
+                                    <td>Community live</td>
+                                    <td>Real-time discussion</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Phù hợp nội thất</strong></td>
+                                    <td>9/10</td>
+                                    <td>10/10</td>
+                                    <td>10/10</td>
+                                    <td>10/10</td>
+                                    <td>5/10</td>
+                                    <td>6/10</td>
+                                    <td>7/10</td>
+                                    <td>4/10</td>
+                                    <td>3/10</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Phù hợp outdoor</strong></td>
+                                    <td>10/10</td>
+                                    <td>10/10</td>
+                                    <td>8/10</td>
+                                    <td>10/10</td>
+                                    <td>5/10</td>
+                                    <td>5/10</td>
+                                    <td>4/10</td>
+                                    <td>6/10</td>
+                                    <td>4/10</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Livestream conversion</strong></td>
+                                    <td>Rất cao</td>
+                                    <td>Cao</td>
+                                    <td>Trung bình</td>
+                                    <td>Cao</td>
+                                    <td>Cực cao</td>
+                                    <td>Trung bình</td>
+                                    <td>Cao</td>
+                                    <td>Trung bình</td>
+                                    <td>Thấp</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Viral organic</strong></td>
+                                    <td>Cực mạnh</td>
+                                    <td>Mạnh</td>
+                                    <td>Mạnh</td>
+                                    <td>Không có</td>
+                                    <td>Trung bình</td>
+                                    <td>Yếu</td>
+                                    <td>Mạnh</td>
+                                    <td>Trung bình</td>
+                                    <td>Trung bình</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Build thương hiệu</strong></td>
+                                    <td>Mạnh</td>
+                                    <td>Cực mạnh</td>
+                                    <td>Cực mạnh</td>
+                                    <td>Cực mạnh</td>
+                                    <td>Trung bình</td>
+                                    <td>Yếu</td>
+                                    <td>Mạnh</td>
+                                    <td>Trung bình</td>
+                                    <td>Trung bình</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="refs">
+                    <strong>REFERENCES:</strong>
+                    <ul style="margin-top:8px;">
+                        <li>Strongest sources / LiveShopFront 2026 Report</li>
+                        <li>Best Live Shopping Platforms 2026</li>
+                        <li>Business Insider TikTok Ecommerce Analysis</li>
+                        <li>Washington Post TikTok Shop Growth</li>
+                        <li>Academic Ecommerce Trust Study</li>
+                        <li>Whatnot Growth Coverage</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
     </div>
 
-    <!-- FUNNEL (Scrollytelling Sticky) -->
-    <section class="funnel-sec" id="funnel-trigger">
-        <div class="funnel-sticky">
-            <div style="text-align: center; margin-bottom: 20px; z-index: 20;" class="funnel-title">
-                <h2 style="margin: 0;">SOCIAL COMMERCE FUNNEL</h2>
-            </div>
-            <div class="funnel-stage">
-                <div class="node-center">SHOPIFY</div>
-                <div class="node-platform n-amz">Amazon Live</div>
-                <div class="node-platform n-tt">TikTok</div>
-                <div class="node-platform n-fb">Facebook</div>
-                <div class="node-platform n-ig">Instagram</div>
-                <div class="node-platform n-yt">YouTube</div>
-            </div>
-            <div class="funnel-title" style="margin-top: 40px; text-align: center; max-width: 600px; z-index: 20;">
-                <p>Social platforms = traffic engine<br>Livestream + Ads = công cụ kéo khách<br>Shopify = hệ thống bán
-                    hàng trung tâm, nơi chốt đơn cuối cùng.</p>
+    <!-- ADDITIONAL MATRIX: PLATFORMS COMPARISON (user table) -->
+    <section class="matrix-section" id="matrix-comparison-2">
+        <div class="container">
+            <div class="matrix-card">
+                <h2 style="margin:0 0 12px 0;"> ĐỀ XUẤT CÁC NỀN TẢNG PHÙ HỢP</h2>
+                <div class="matrix-table">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Tiêu chí</th>
+                                    <th>TikTok</th>
+                                    <th>Meta</th>
+                                    <th>YouTube</th>
+                                    <th>Amazon</th>
+                                    <th>eBay</th>
+                                    <th>Shopify</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Vai trò trong funnel</td>
+                                    <td>Discovery / tạo nhu cầu</td>
+                                    <td>Awareness / branding</td>
+                                    <td>Consideration / trust</td>
+                                    <td>Conversion (search intent)</td>
+                                    <td>Conversion (auction)</td>
+                                    <td>End system / CRM</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Định vị chính</td>
+                                    <td>Viral commerce</td>
+                                    <td>Social lifestyle</td>
+                                    <td>Education + SEO</td>
+                                    <td>Search ecommerce</td>
+                                    <td>Marketplace + e-bidding</td>
+                                    <td>DTC system</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Tệp khách hàng</td>
+                                    <td>Impulse buyers</td>
+                                    <td>Lifestyle buyers</td>
+                                    <td>Research buyers</td>
+                                    <td>Intent buyers</td>
+                                    <td>Deal hunters</td>
+                                    <td>Retained customers</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Mức độ phù hợp nội thất</td>
+                                    <td>Rất cao</td>
+                                    <td>Rất cao</td>
+                                    <td>Cực cao</td>
+                                    <td>Cực cao</td>
+                                    <td>Trung bình-cao</td>
+                                    <td>Cực cao</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Mức độ phù hợp outdoor</td>
+                                    <td>Cực cao</td>
+                                    <td>Rất cao</td>
+                                    <td>Cực cao</td>
+                                    <td>Cực cao</td>
+                                    <td>Cao</td>
+                                    <td>Cực cao</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Tính năng chính</td>
+                                    <td>Live + short video</td>
+                                    <td>Live + ads + IG shop</td>
+                                    <td>Live + SEO</td>
+                                    <td>Listing + Prime</td>
+                                    <td>Auction + live</td>
+                                    <td>Store + CRM</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>Điểm mạnh</td>
+                                    <td>Viral mạnh</td>
+                                    <td>Branding mạnh</td>
+                                    <td>Trust mạnh</td>
+                                    <td>Conversion mạnh</td>
+                                    <td>Deal hunters / FOMO</td>
+                                    <td>Ownership mạnh</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>Điểm yếu</td>
+                                    <td>Trust thấp</td>
+                                    <td>Phụ thuộc ads</td>
+                                    <td>Growth chậm</td>
+                                    <td>Cạnh tranh cao</td>
+                                    <td>Ít branding</td>
+                                    <td>Không có traffic tự nhiên</td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td>Viral</td>
+                                    <td>Cực mạnh</td>
+                                    <td>Cao</td>
+                                    <td>Trung bình</td>
+                                    <td>Trung bình</td>
+                                    <td>Thấp</td>
+                                    <td>Không có</td>
+                                </tr>
+                                <tr>
+                                    <td>10</td>
+                                    <td>Build brand</td>
+                                    <td>Mạnh</td>
+                                    <td>Cực mạnh</td>
+                                    <td>Cực mạnh</td>
+                                    <td>Trung bình</td>
+                                    <td>Yếu</td>
+                                    <td>Cực mạnh</td>
+                                </tr>
+                                <tr>
+                                    <td>11</td>
+                                    <td>Vai trò chính</td>
+                                    <td>Demand creation</td>
+                                    <td>Perception creation</td>
+                                    <td>Trust building</td>
+                                    <td>Marketplace sales</td>
+                                    <td>Auction conversion</td>
+                                    <td>Revenue ownership</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
-
-    <!-- HORIZONTAL SCROLL: LIVESTREAM PLATFORMS -->
-    <section class="h-scroll-sec" id="platforms-trigger">
-        <div class="h-sticky">
-            <div style="position: absolute; top: 40px; left: 10vw;">
-                <div class="hero-tag">Phần II</div>
-                <h2 style="margin-top: 0;">NỀN TẢNG LIVESTREAM ĐỀ XUẤT 2026</h2>
-            </div>
-            <div class="h-wrap" id="h-wrap">
-                <!-- 1. NTWRK -->
-                <div class="platform-card glass">
-                    <h3>1. NTWRK</h3><span class="region">USA</span>
-                    <p><strong>Mô tả:</strong> Livestream bán hàng tập trung vào Sneaker, Streetwear, Đồ sưu tầm giới
-                        hạn, Nội dung giải trí với celeb.</p>
-                    <p><strong>Tính năng:</strong> Livestream shopping, Exclusive drops, Đấu giá & flash sale, Talkshow.
-                    </p>
-                    <p><strong>Yêu cầu:</strong> Kết nối Shopify Store & Stripe Connect. Brand nên có community sẵn.</p>
-                </div>
-                <!-- 2. eBay Live -->
-                <div class="platform-card glass">
-                    <h3>2. eBay Live</h3><span class="region">USA / AUS / CAN</span>
-                    <p><strong>Mô tả:</strong> Phát triển từ marketplace toàn cầu cho hàng mới & cũ.</p>
-                    <p><strong>Tính năng chính:</strong> Auction, Buy It Now, eBay Payments, Buyer Protection, Global
-                        Shipping.</p>
-                    <p><strong>Tập trung vào:</strong> Bán hàng realtime, chat trực tiếp, mua ngay hoặc đấu giá trong
-                        livestream.</p>
-                </div>
-                <!-- 3. Whatnot -->
-                <div class="platform-card glass">
-                    <h3>3. Whatnot</h3><span class="region">USA / AUS / CAN</span>
-                    <p><strong>Mô tả:</strong> Live shopping marketplace (Auction & Buy Now) hoạt động mạnh tại Mỹ &
-                        Châu Âu.</p>
-                    <p><strong>Tính năng:</strong> Realtime bidding, Live chat, Countdown auction, Mystery box, Shipping
-                        automation.</p>
-                    <p><strong>Lưu ý:</strong> Seller phải đóng gói & giao hàng đúng hạn.</p>
-                </div>
-                <!-- 4. X -->
-                <div class="platform-card glass">
-                    <h3>4. X (Twitter/X)</h3><span class="region">USA</span>
-                    <p><strong>Mô tả:</strong> Nền tảng realtime của Elon Musk. Bắt trend nóng về Crypto, Chứng khoán,
-                        AI, Startup.</p>
-                    <p><strong>Tính năng:</strong> Livestream, Spaces (audio), Grok AI, Subscription, Shopping & payment
-                        (đang phát triển).</p>
-                    <p><strong>Yêu cầu:</strong> X Premium hoặc tài khoản xác minh.</p>
-                </div>
-                <!-- 5. Twitch -->
-                <div class="platform-card glass">
-                    <h3>5. Twitch</h3><span class="region">USA</span>
-                    <p><strong>Mô tả:</strong> Thuộc Amazon. Từ gaming mở rộng sang Podcast, IRL, Outdoor, Shopping.</p>
-                    <p><strong>Tính năng:</strong> Replay VOD, Bits/Donation, OBS integration.</p>
-                    <p><strong>Điều kiện Affiliate:</strong> 50 follower, 500 phút live/30 ngày, 3 viewer trung bình.
-                    </p>
-                </div>
-                <!-- 6. YouTube -->
-                <div class="platform-card glass">
-                    <h3>6. YouTube</h3><span class="region">USA / AUS / CAN</span>
-                    <p><strong>Mô tả:</strong> Video dài, Shorts, Livestream, Podcast. Hệ thống AI recommendation mạnh.
-                    </p>
-                    <p><strong>Best Practice:</strong> Link trong description, Pinned comment, Community post. Dùng
-                        domain Shopify riêng (shop.yourbrand.com). Không spam link rút gọn.</p>
-                </div>
-                <!-- 7. Instagram -->
-                <div class="platform-card glass">
-                    <h3>7. Instagram</h3><span class="region">USA / AUS / CAN</span>
-                    <p><strong>Mô tả:</strong> Tập trung Hình ảnh, Video ngắn, Personal branding.</p>
-                    <p><strong>Vì sao phù hợp Livestream bán hàng?:</strong> Visual đẹp, hợp với Nội thất, Outdoor,
-                        Camping, Lifestyle. Dễ xây thương hiệu cá nhân, dễ chốt đơn, kéo traffic về Shopify tốt.</p>
-                </div>
-                <!-- 8. Shopify -->
-                <div class="platform-card glass" style="border-color: var(--shopify);">
-                    <h3 style="color: var(--shopify);">8. Shopify</h3><span class="region">USA / AUS / CAN</span>
-                    <p><strong>Mô tả:</strong> Nền tảng tạo website bán hàng online trung tâm.</p>
-                    <p><strong>Chức năng chính:</strong> Tạo online store, Quản lý sản phẩm (Inventory, Variant), Thanh
-                        toán, Quản lý đơn hàng, Marketing (Ads, Discount, Upsell).</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CONTENT: CHIEN LUOC & KET LUAN II -->
+     <!-- CONTENT: CHIEN LUOC & KET LUAN II -->
     <div class="container" style="padding-top: 50px;">
         <div class="card-block fade-up">
-            <h2 style="margin-top: 0;">ĐỀ XUẤT CHIẾN LƯỢC & KẾT LUẬN (PHẦN II)</h2>
-            <div class="grid-2">
-                <div>
-                    <h4>Nội dung Livestream IG nên làm:</h4>
-                    <ul>
-                        <li>Show phòng khách</li>
-                        <li>Setup sân vườn</li>
-                        <li>Demo ghế / bàn / lều</li>
-                        <li>Showcase lifestyle</li>
-                    </ul>
-                </div>
-                <div>
-                    <h4>Flow đề xuất & Tóm tắt:</h4>
-                    <p><strong>Instagram (livestream)</strong> → <strong>Shopify (chốt đơn)</strong> → <strong>YouTube
-                            (xây uy tín lâu dài)</strong></p>
-                    <ul class="list-unstyled">
-                        <li>Shopify = nơi bán hàng chính</li>
-                        <li>Instagram = livestream chốt đơn</li>
-                        <li>YouTube = xây niềm tin lâu dài</li>
-                    </ul>
-                </div>
-            </div>
+            <h2 style="margin-top: 0;">KẾT LUẬN</h2>
+            <p style="margin-bottom:18px;"><strong>KẾT LUẬN:</strong> Team đề xuất định hướng livestream đa kênh trên 6 nền tảng mạnh nhất hiện nay: <em>TikTok, Meta (FB/IG), YouTube, Amazon, eBay, Shopify</em>. Mỗi nền tảng có vai trò khác nhau trong funnel và cần chiến lược phù hợp.</p>
         </div>
-    </div>
-
     <!-- PHẦN III -->
     <div class="container" style="padding-top: 50px;">
         <div class="hero-tag">Phần III</div>
         <h2 style="font-size: 3.5rem;">RESEARCH ABOUT AI LIVESTREAM PLATFORM</h2>
 
-        <div class="fade-up" style="margin-top: 60px;">
-            <h3>1. OVERVIEW</h3>
-            <p><strong>Thị trường Mỹ:</strong> Doanh thu Social Commerce lần đầu vượt mốc 100 tỷ USD. Hơn 60% hành vi
-                khám phá sản phẩm diễn ra trên TikTok, Instagram và YouTube.</p>
-            <p><strong>Chi tiết đắt giá:</strong> Tỷ lệ chuyển đổi của Livestream đạt mức không tưởng là <span
-                    class="text-red-bold">30%</span> (đè bẹp hoàn toàn mức 2% của TMĐT truyền thống).</p>
-            <p>Tik Tok Shop đang dẫn đầu cuộc đua với tỷ lệ chuyển đổi 4.7% (gấp đôi Instagram), dự kiến gom về 23.41 tỷ
-                USD.</p>
-            <p><em><strong>Khách hàng ưu tiên mua sắm nội thất (đặc biệt là không gian ngoài trời) qua các nền tảng tích
-                        hợp công nghệ AR để dễ dàng ra quyết định từ xa.</strong></em></p>
-            <p>Đầu năm 2026, Amazon đã thay đổi thuật toán phá bỏ hệ sinh thái affiliate spam, chuyển sang
-                creator-commerce minh bạch và kiểm soát cao (brand cá nhân, audience thật, niche sâu).</p>
-        </div>
+        
 
         <div class="fade-up" style="margin-top: 60px;">
-            <h3>2. INDUSTRIES</h3>
+            <h3>1. INDUSTRIES</h3>
             <p>Đặc thù của ngành nội thất ngoài trời nằm ở thách thức cốt lõi mang tên <strong>Imagination Gap</strong>.
             </p>
             <p>Người tiêu dùng không thể hình dung chính xác sản phẩm 3D sẽ trông thế nào trong sân vườn dựa trên ảnh 2D
                 nền trắng.</p>
-            <p>→ Sự thiếu hụt ngữ cảnh này là nguyên nhân chính dẫn đến do dự và <span class="text-red-bold">return rate
+            <p>là nguyên nhân chính dẫn đến do dự và <span class="text-red-bold">return rate
                     cao</span>.</p>
 
-            <h4 style="margin-top: 40px; color: var(--primary);">2.1. Các thương hiệu đang dùng AI Livestream như thế
-                nào</h4>
+            <h4 style="margin-top: 40px; color: var(--primary);"> Tình hình thị trường
+                </h4>
+                
             <div class="grid-2">
                 <div class="card-block">
                     <h4>Châu Á (Bùng nổ)</h4>
-                    <p>AI Livestream chuyển từ "thử nghiệm" sang "máy in tiền". Ví dụ: phiên live của Luo Yonghao trên
+                    <p>CASE: phiên live của Luo Yonghao trên
                         Baidu bằng Avatar AI hút 13 triệu view, thu 55 triệu NDT (7,6 triệu USD) trong 6 giờ.</p>
                 </div>
                 <div class="card-block">
                     <h4>Mỹ & Phương Tây (Rào cản niềm tin)</h4>
-                    <p>Thị trường dự kiến 68 tỷ USD. Chỉ 14% người Mỹ tin tưởng hoàn toàn vào khuyến nghị của AI.
+                    <p>Chỉ 14% người Mỹ tin tưởng hoàn toàn vào khuyến nghị của AI.
                         <strong class="text-red-bold">75% người Mỹ tuyên bố mất niềm tin ngay lập tức</strong> nếu phát
                         hiện AI thiếu minh bạch, bị chi phối bởi quảng cáo.
                     </p>
@@ -686,32 +1351,8 @@
             <p><strong>Vị thế Enterprise:</strong> Samsung dùng AnyLive bơm thêm 4.450 giờ live/tháng trên 8 quốc gia
                 không cần tuyển MC. Evian giảm 90% chi phí sản xuất.</p>
 
-            <h4 style="margin-top: 40px; color: var(--primary);">2.2. Market and Customer</h4>
-            <div class="grid-2">
-                <div>
-                    <h4>2.2.1 Thị Trường Hoa Kỳ</h4>
-                    <ul>
-                        <li><strong>Quy mô:</strong> 100 tỷ USD Social Commerce.</li>
-                        <li><strong>Khách hàng:</strong> Gen Z & Millennials (32% chi tiêu).</li>
-                        <li><strong>Điểm nghẽn:</strong> Bão hòa, né tránh quảng cáo ép buộc. Thuật toán trừng phạt nội
-                            dung bán hàng lộ liễu.</li>
-                        <li><strong>Chiến lược:</strong> Chuyển sang <strong>Shoppertainment</strong> (Mua sắm kết hợp
-                            giải trí, lồng ghép lifestyle).</li>
-                    </ul>
-                </div>
-                <div>
-                    <h4>2.2.2 Thị Trường Úc</h4>
-                    <ul>
-                        <li><strong>Quy mô:</strong> 27.7 tỷ AUD, bùng nổ ngách nội thất.</li>
-                        <li><strong>Đặc thù:</strong> Chuộng hoạt động ngoài trời, dã ngoại, sân vườn → Lợi thế cho
-                            outdoor products.</li>
-                        <li><strong>Khách hàng:</strong> Ưu tiên thiết kế linh hoạt và <strong>vật liệu bền
-                                vững</strong>.</li>
-                    </ul>
-                </div>
-            </div>
         </div>
-
+       
         <div class="fade-up" style="margin-top: 80px;">
             <h3>3. PROPOSAL (THÔNG TIN PHẦN MỀM AI)</h3>
             <div class="table-wrapper">
@@ -738,7 +1379,7 @@
                         </tr>
                         <tr>
                             <td>2. Syntopia</td>
-                            <td>Setup 4 bước; 100+ Avatars; Tự động hóa theo từ khóa. <br><em>(Chưa linh hoạt lắm ->
+                            <td> 100+ Avatars; Tự động hóa theo từ khóa. <br><em>(Chưa linh hoạt lắm ->
                                     NEWBIE)</em></td>
                             <td>CAO</td>
                             <td>TikTok Shop, Shopee, Lazada.</td>
@@ -774,185 +1415,91 @@
                 </table>
             </div>
 
-            <h4 style="margin-top: 40px; color: var(--primary);">3.2 ĐỀ XUẤT VÀ BIỆN GIẢI CHIẾN LƯỢC → ANY LIVE</h4>
+            <h4 style="margin-top: 40px; color: var(--primary);">3.2 ĐỀ XUẤT → ANY LIVE</h4>
             <div class="grid-3">
                 <div class="card-block">
-                    <h4>3.2.1 Tích hợp thực chiến</h4>
+                    <h4> Tích hợp thực chiến</h4>
                     <p>Phát trực tiếp đồng thời lên Amazon Live, TikTok Shop US, FB, IG, YT. Tận dụng tối đa gian hàng
                         Amazon sẵn có để đồng bộ giỏ hàng và chốt đơn ngay trong stream.</p>
                 </div>
                 <div class="card-block">
-                    <h4>3.2.2 Filling gap (Hybrid Retail)</h4>
-                    <p>Ngành nội thất cần mô hình lai:</p>
+                    <h4>Filling gap (Hybrid time)</h4>
+                    <p>mô hình Lai:</p>
                     <ul class="list-unstyled">
                         <li><strong>Prime Time:</strong> HUMAN HOST live (2-3 tiếng).</li>
-                        <li><strong>Off-Peak:</strong> AI Host tiếp quản 24/7 trả lời câu hỏi kỹ thuật, tăng độ phủ
+                        <li><strong>Off-Peak:</strong> AI Host tiếp quản 20 tiếng còn lại và trả lời câu hỏi kỹ thuật, tăng độ phủ
                             sóng.</li>
                     </ul>
                 </div>
                 <div class="card-block">
-                    <h4>3.2.3 Đồng bộ dữ liệu</h4>
+                    <h4>Đồng bộ dữ liệu</h4>
                     <p>Tích hợp trực tiếp <strong>AnyX</strong> (Nền tảng quản lý TMĐT). Bán hàng đồng thời trên Amazon
-                        & TikTok, AnyLive tự động đồng bộ tồn kho thời gian thực.</p>
+                        & TikTok, và nhiều nền tảng cùng lúc.</p>
                 </div>
             </div>
         </div>
 
         <div class="fade-up" style="margin-top: 80px;">
-            <h3>4. ANYLIVE (METRIC TO EVALUATING)</h3>
+            <h3>METRIC TO EVALUATING</h3>
             <p>Hệ sinh thái của AnyMind Group tích hợp trực tiếp AnyX (Quản lý TMĐT) và AnyLogi (Hậu cần).</p>
             <div class="table-wrapper">
                 <table>
                     <thead>
                         <tr>
-                            <th>Khía cạnh Công nghệ</th>
-                            <th>Phân tích chuyên sâu & Ứng dụng thực tiễn</th>
+                            <th>Khía cạnh </th>
+                            <th>Nội dung</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>1. AI Avatar Quality</strong></td>
-                            <td>Cung cấp Avatar Bank & Custom Avatar. Sắc nét, phù hợp MC đứng góc. Chưa đạt mức
-                                Hyper-realism vi biểu cảm như HeyGen.</td>
+                            <td><strong> AI Avatar Quality</strong></td>
+                            <td>Cung cấp Avatar Bank & Custom Avatar. Sắc nét, phù hợp MC đứng góc.</td>
                         </tr>
                         <tr>
-                            <td><strong>2. AI Host Realism</strong></td>
+                            <td><strong>AI Host Realism</strong></td>
                             <td>Lip-sync tốt. Chuyển động cơ thể còn lặp lại (looped gestures), có thể gây Uncanny
                                 Valley nếu xem liên tục.</td>
                         </tr>
                         <tr>
-                            <td><strong>3. Voice Quality</strong></td>
+                            <td><strong> Voice Quality</strong></td>
                             <td>TTS đa ngôn ngữ, nhận diện phương ngữ tốt. Phù hợp thị trường Mỹ đa văn hóa.</td>
                         </tr>
                         <tr>
-                            <td><strong>4. Realtime Response</strong></td>
+                            <td><strong>Realtime Response</strong></td>
                             <td>Phân tích bình luận realtime để AI phản hồi. Đủ nhanh cho nhịp độ TikTok Shop.</td>
                         </tr>
                         <tr>
-                            <td><strong>5. AI Conversation Capability</strong></td>
-                            <td>Tích hợp LLM nội bộ. Cho phép thiết lập rào chắn (Guardrails) qua FAQ để tránh tư vấn
-                                sai tải trọng võng.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>6. AI Selling Capability</strong></td>
+                            <td><strong>AI Selling Capability</strong></td>
                             <td>Tự động nhắc mã giảm giá, đếm ngược flash sale, CTA. Tự động kịch bản từ URL sản phẩm.
                             </td>
                         </tr>
                         <tr>
-                            <td><strong>7. AI Engagement Logic</strong></td>
-                            <td>Đọc tên người dùng, trả lời trực tiếp. Thiếu nhận diện cảm xúc camera (Sentiment
-                                analysis).</td>
+                            <td><strong>AI Engagement Logic</strong></td>
+                            <td>Đọc tên người dùng, trả lời trực tiếp. Thiếu nhận diện cảm xúc camera.</td>
                         </tr>
+                        
                         <tr>
-                            <td><strong>8. Multistream Technology</strong></td>
-                            <td>Hạ tầng mạnh. Đẩy RTMP đồng thời lên Amazon, TikTok, Shopee, YT, FB, IG với 1 chi phí
-                                vận hành.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>9. Streaming Stability</strong></td>
+                            <td><strong>Streaming Stability</strong></td>
                             <td>Cloud-hosted. Độ ổn định cao 20-24 giờ/ngày, không sập luồng.</td>
                         </tr>
                         <tr>
-                            <td><strong>10. AI Latency</strong></td>
-                            <td>Độ trễ 3-5s. Chấp nhận được, dù kém hơn WebRTC (500ms) của agent đắt tiền.</td>
+                            <td><strong> AI Latency</strong></td>
+                            <td>Độ trễ 3-5s. Chấp nhận được.</td>
                         </tr>
                         <tr>
-                            <td><strong>11. Automation Workflow</strong></td>
-                            <td>One-time setup. Tự động hóa lấy sản phẩm, viết kịch bản, phân phối luồng phát. Hợp
-                                Enterprise.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>12. API & Integration</strong></td>
-                            <td>Sức mạnh lớn nhất. Tuân thủ chuẩn mực nền tảng thương mại lớn, tích hợp sâu.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>13. CRM Integration</strong></td>
-                            <td>Kết nối AnyChat lưu vết tương tác để Remarketing.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>14. Ecommerce Integration</strong></td>
+                            <td><strong>Ecommerce Integration</strong></td>
                             <td>Tích hợp gốc AnyX. Quản lý toàn bộ danh mục Megsu từ Amazon đến TikTok Shop.</td>
                         </tr>
                         <tr>
-                            <td><strong>15. Product Feed & Inventory</strong></td>
-                            <td><strong>Điểm mấu chốt:</strong> Đồng bộ tồn kho realtime. Tránh overselling khi TikTok
-                                bùng nổ đơn.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>16. Realtime Comment Handling</strong></td>
-                            <td>Tự động phân loại. Trả lời câu hỏi, bỏ qua bình luận tiêu cực (troll).</td>
-                        </tr>
-                        <tr>
-                            <td><strong>17. AI Moderation</strong></td>
+                            <td><strong>AI Moderation</strong></td>
                             <td>Kiểm duyệt qua từ khóa đen. Vẫn cần CSKH giám sát ngầm.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>18. Analytics Capability</strong></td>
-                            <td>Đo lường retention, conversion, GMV, keyword realtime để tối ưu kịch bản.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>19. Content Automation</strong></td>
-                            <td>LLM tự động tinh chỉnh kịch bản dựa trên dữ liệu người xem thực tế.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>20. Scalability Infrastructure</strong></td>
-                            <td>Triển khai hàng chục luồng song song nhiều thị trường/ngôn ngữ trong thời gian ngắn (2
-                                tuần).</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <div class="fade-up" style="margin-top: 80px;">
-            <h3>5. TƯƠNG THÍCH ĐA NỀN TẢNG (OMNICHANNEL MATRIX)</h3>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nền tảng</th>
-                            <th>Phù hợp</th>
-                            <th>Thuật toán & Chuyển đổi</th>
-                            <th>Rủi ro Vi phạm (Cập nhật 2026)</th>
-                            <th>Chiến lược tối ưu bằng ANYLIVE</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Amazon Live</strong></td>
-                            <td>Trung bình - Cao</td>
-                            <td>Chuyển đổi cực mạnh (High Intent). Tỷ lệ mua gấp 17 lần bình thường.</td>
-                            <td class="text-red-bold">RỦI RO TỐI CAO: Bản cập nhật BSA áp dụng "Agent Policy". Bắt buộc
-                                minh bạch, tuân thủ giới hạn API, có "Kill Switch" ngắt khẩn cấp.</td>
-                            <td>Đẩy luồng 24/7. Focus giải đáp FAQ kích thước, chất liệu. Đảm bảo AnyX gọi API hợp lệ.
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><strong>TikTok Shop (US)</strong></td>
-                            <td>Rất Cao</td>
-                            <td>Shoppertainment. Thuật toán duy trì hiển thị cho live 24/7. Quét lặp lại gắt.</td>
-                            <td class="text-red-bold">RỦI RO TỐI CAO: BẮT BUỘC bật nhãn "AI-Generated" tránh 0-view
-                                jail. Ép dùng Logistics tập trung từ 25/2/2026.</td>
-                            <td>Bật AIGC Disclosure. Kịch bản luân phiên (tránh tĩnh quá 50%). Kết hợp API AnyLogi.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>YouTube Live</strong></td>
-                            <td>Cao</td>
-                            <td>Ưu tiên Watch time, tính nhất quán. Hợp nội dung How-to chuyên sâu.</td>
-                            <td>Mức rủi ro thấp. Linh hoạt với AI nếu mang tính giáo dục.</td>
-                            <td>Luồng "24/7 Outdoor Vibes", AI Host tư vấn. Tích hợp YT Shopping chốt đơn.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Meta Live (FB/IG)</strong></td>
-                            <td>Trung bình</td>
-                            <td>Tương tác giảm, tệp Gen X/Millennials. Phù hợp Awareness & Retargeting.</td>
-                            <td>Yêu cầu gắn thẻ "Made with AI", nếu không bị hạ cấp hiển thị.</td>
-                            <td>Tận dụng Followers sẵn có. Dùng làm phễu Lead generation kéo về Shopify.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+
 
         <div class="fade-up" style="margin-top: 80px;">
             <h3>6. PAINT POINT</h3>
@@ -969,11 +1516,11 @@
                     </ul>
                 </div>
                 <div class="card-block">
-                    <h4 style="color: var(--primary);">6.2 Tâm lý chuyển đổi Outdoor Furniture</h4>
+                    <h4 style="color: var(--primary);">6.2 Tâm lý khi mua Furniture</h4>
                     <ul>
                         <li><strong>Kỳ vọng chân thực:</strong> Khách cần nội dung "thô" (raw), người thật nằm thử để
                             kiểm chứng độ chòng chành, lắp ghép thép tĩnh điện thực tế.</li>
-                        <li><strong>Rào cản vật lý:</strong> AI mù tịt không gian 3D. AI đứng thuyết trình độ bền sẽ tạo
+                        <li><strong>Rào cản vật lý:</strong> AI chưa thể hiện không gian 3D. AI đứng thuyết trình độ bền sẽ tạo
                             cảm giác lừa dối, gây "Uncanny Valley".</li>
                         <li><strong>Parasocial:</strong> AI chưa đủ thấu cảm để tạo quan hệ xã hội ảo.</li>
                     </ul>
@@ -982,102 +1529,11 @@
                 </div>
             </div>
         </div>
-
         <div class="fade-up" style="margin-top: 80px;">
-            <h3>7. ĐÁNH GIÁ TÍNH ỨNG DỤNG THỰC TẾ</h3>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Use Case</th>
-                            <th>Hiệu quả</th>
-                            <th>Đánh giá & Rủi ro</th>
-                            <th>Khuyến nghị</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1. AI Product Demo</td>
-                            <td>RẤT THẤP</td>
-                            <td>AI không có thực thể vật lý. Ghép 3D tạo cảm giác lừa dối.</td>
-                            <td class="text-red-bold">TUYỆT ĐỐI TRÁNH</td>
-                        </tr>
-                        <tr>
-                            <td>2. 24/7 AI Livestream</td>
-                            <td>RẤT CAO</td>
-                            <td>Giá trị lõi ANYLIVE. Vớt khách mua đêm khuya, tối ưu 90% chi phí.</td>
-                            <td>ĐẦU TƯ TRỌNG ĐIỂM</td>
-                        </tr>
-                        <tr>
-                            <td>3. AI MC + Human B-roll</td>
-                            <td>RẤT CAO</td>
-                            <td>Giải pháp Tối ưu: AI làm MC đọc thông số, B-roll chiếu người thật nằm võng.</td>
-                            <td>ĐẦU TƯ TRỌNG ĐIỂM</td>
-                        </tr>
-                        <tr>
-                            <td>4. AI FAQ Automation</td>
-                            <td>RẤT CAO</td>
-                            <td>LLM tự động đọc và trả lời câu hỏi lặp lại ngay lập tức. Giảm tải CSKH.</td>
-                            <td>ÁP DỤNG NGAY</td>
-                        </tr>
-                        <tr>
-                            <td>5. AI Sales Assistant</td>
-                            <td>TRUNG BÌNH</td>
-                            <td>Tự động đếm ngược Flash Sale. Lạm dụng sẽ gây phản cảm nhóm AI Holdout.</td>
-                            <td>Dùng vừa phải</td>
-                        </tr>
-                        <tr>
-                            <td>6. Seasonal Campaign</td>
-                            <td>CAO</td>
-                            <td>Thay đổi bối cảnh linh hoạt theo mùa (cắm trại thu, bãi biển hè).</td>
-                            <td>Nên triển khai</td>
-                        </tr>
-                        <tr>
-                            <td>7. UGC-Style Livestream</td>
-                            <td>RẤT THẤP</td>
-                            <td>Giả dạng UGC người thật là lừa dối, bị thuật toán và người dùng quay lưng.</td>
-                            <td class="text-red-bold">TUYỆT ĐỐI TRÁNH</td>
-                        </tr>
-                        <tr>
-                            <td>8. AI Lifestyle Commerce</td>
-                            <td>TRUNG BÌNH</td>
-                            <td>AI kể chuyện thương hiệu thiếu cảm xúc, nên để người thật kể.</td>
-                            <td>Không ưu tiên</td>
-                        </tr>
-                        <tr>
-                            <td>9. Human-to-AI Handover</td>
-                            <td>CAO</td>
-                            <td>Giờ Vàng (Prime Time): Thuê KOL/người thật. Ban đêm: giao AI.</td>
-                            <td>CHIẾN LƯỢC CỐT LÕI</td>
-                        </tr>
-                        <tr>
-                            <td>10. AI Analytics & Opt</td>
-                            <td>RẤT CAO</td>
-                            <td>Phân tích kịch bản chốt đơn cao nhất và tối ưu cho ca sau.</td>
-                            <td>Bắt buộc sử dụng</td>
-                        </tr>
-                        <tr>
-                            <td>11. Multilingual</td>
-                            <td>CAO</td>
-                            <td>Đánh thị trường Úc/Tây Ban Nha bằng phương ngữ chuẩn xác lập tức.</td>
-                            <td>Tiềm năng dài hạn</td>
-                        </tr>
-                        <tr>
-                            <td>12. AI Retargeting</td>
-                            <td>CAO</td>
-                            <td>Cắt video AI tư vấn thành Reels/Shorts chạy Meta Ads.</td>
-                            <td>Triển khai tự động</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="fade-up" style="margin-top: 80px;">
-            <h3>8. CÁC CHÍNH SÁCH SÀN (5 RỦI RO CỐT LÕI)</h3>
+            <h3>8. CÁC CHÍNH SÁCH SÀN</h3>
             <div class="grid-2">
                 <div class="card-block" style="border-color: var(--danger);">
-                    <h4 class="text-red-bold">1. Rủi ro Thuật toán Nền tảng</h4>
+                    <h4 class="text-red-bold"> Rủi ro Thuật toán Nền tảng</h4>
                     <p><strong>Amazon BSA 2026:</strong> Bắt buộc minh bạch AI, tuân thủ Rate Limit, có "Kill Switch".
                     </p>
                     <p><strong>TikTok:</strong> BẮT BUỘC nhãn AIGC. Cấm nội dung tĩnh quá 50% thời lượng.</p>
@@ -1085,85 +1541,113 @@
                         Policy.</p>
                 </div>
                 <div class="card-block" style="border-color: var(--danger);">
-                    <h4 class="text-red-bold">2. Rủi ro Pháp lý Sản phẩm</h4>
-                    <p><strong>Vấn đề:</strong> AI bị ảo giác (Hallucination) tư vấn võng tải 1000lbs, khách ngã, bị
-                        kiện theo AI LEAD Act.</p>
-                    <p><strong>Phòng vệ:</strong> Khóa chặt Guardrails. AI CHỈ được dùng Whitelisted FAQs.</p>
-                </div>
-                <div class="card-block" style="border-color: var(--danger);">
-                    <h4 class="text-red-bold">3. Rủi ro Chuỗi cung ứng (Cực Cao)</h4>
+                    <h4 class="text-red-bold">Rủi ro Chuỗi cung ứng (Cực Cao)</h4>
                     <p><strong>Vấn đề:</strong> Tháng 2/2026 TikTok ép dùng kho nội bộ. API trễ gây overselling (bán
                         khống).</p>
                     <p><strong>Phòng vệ:</strong> Thiết lập Safety Buffer (Tồn 500 thì báo 400). AnyLogi kết nối trơn
                         tru.</p>
                 </div>
                 <div class="card-block" style="border-color: var(--danger);">
-                    <h4 class="text-red-bold">4. Rủi ro "Uncanny Valley"</h4>
+                    <h4 class="text-red-bold">Rủi ro "Uncanny Valley"</h4>
                     <p>75% người Mỹ mất niềm tin nếu không minh bạch. AI cử động lặp lại gây chán ghét.</p>
                     <p><strong>Phòng vệ:</strong> Áp dụng Mô hình MC Ảo + Video B-roll người thật ở màn hình chính.</p>
                 </div>
                 <div class="card-block" style="border-color: var(--danger);">
-                    <h4 class="text-red-bold">5. AI Fatigue (Chán ngán AI)</h4>
+                    <h4 class="text-red-bold">AI Fatigue (Chán ngán AI)</h4>
                     <p>Khán giả dễ lướt qua luồng AI vì nhàm chán.</p>
                     <p><strong>Phòng vệ:</strong> Đan xen người thật giờ cao điểm, AI làm nhiệm vụ "trông nhà" ban đêm.
                     </p>
                 </div>
             </div>
         </div>
+        </div>
+        
 
+                <div class="fade-up" style="margin-top: 80px;">
+            <h3>ĐỘ TƯƠNG THÍCH ĐA NỀN TẢNG </h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nền tảng</th>
+                            <th>Phù hợp</th>
+                        
+                            <th>Rủi ro Vi phạm (Cập nhật 2026)</th>
+                            <th>Chiến lược tối ưu bằng ANYLIVE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Amazon Live</strong></td>
+                            <td>Trung bình - Cao</td>
+                            <td class="text-red-bold">RỦI RO TỐI CAO: Bản cập nhật BSA áp dụng "Agent Policy". Bắt buộc
+                                minh bạch, tuân thủ giới hạn API, có "Kill Switch" ngắt khẩn cấp.</td>
+                            <td>Đẩy luồng 24/7. Focus giải đáp FAQ kích thước, chất liệu. Đảm bảo AnyX gọi API hợp lệ.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>TikTok Shop (US)</strong></td>
+                            <td>Rất Cao</td>
+                            <td class="text-red-bold">RỦI RO TỐI CAO: BẮT BUỘC bật nhãn "AI-Generated" tránh 0-view
+                                jail. Ép dùng Logistics tập trung từ 25/2/2026.</td>
+                            <td>Bật AIGC Disclosure. Kịch bản luân phiên (tránh tĩnh quá 50%). Kết hợp API AnyLogi.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>YouTube Live</strong></td>
+                            <td>Cao</td>
+                            <td>Mức rủi ro thấp. Linh hoạt với AI nếu mang tính giáo dục.</td>
+                            <td>Luồng "24/7 Outdoor Vibes", AI Host tư vấn. Tích hợp YT Shopping chốt đơn.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Meta Live (FB/IG)</strong></td>
+                            <td>Trung bình</td>
+                            <td>Yêu cầu gắn thẻ "Made with AI", nếu không bị hạ cấp hiển thị.</td>
+                            <td>Tận dụng Followers sẵn có. Dùng làm phễu Lead generation kéo về Shopify.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+         
         <!-- PHẦN 10: VERDICT -->
         <div class="fade-up"
             style="margin-top: 100px; padding: 60px; background: radial-gradient(circle at center, rgba(168,85,247,0.1), transparent 80%); border: 1px solid var(--ai-accent); border-radius: 24px;">
-            <h2 style="text-align: center; color: #fff;">PHẦN 10 — KẾT LUẬN CHIẾN LƯỢC TỐI HẬU</h2>
-            <p style="text-align: center; margin-bottom: 40px; font-style: italic;">Trả lời quyết định cho Ban Giám đốc
-                Megsu:</p>
-
+            <h2 style="text-align: center; color: #fff;">CÁC ĐÁNH GIÁ CỦA TEAM</h2>
+            
             <div style="margin-bottom: 24px;">
-                <h4 style="color: var(--primary);">1. ANYLIVE có đáng đầu tư không?</h4>
+                <h4 style="color: var(--primary);"> ANYLIVE có đáng đầu tư không?</h4>
                 <p><strong>Có,</strong> như một "hạ tầng bán hàng tự động". Tích hợp hệ sinh thái AnyX/AnyLogi giải
                     quyết vận hành, tồn kho hơn là chỉ có Avatar đẹp.</p>
             </div>
             <div style="margin-bottom: 24px;">
-                <h4 style="color: var(--primary);">2. Phù hợp mức nào?</h4>
+                <h4 style="color: var(--primary);"> Phù hợp mức nào?</h4>
                 <p><strong>Hoàn hảo (Mid-market đến Enterprise).</strong> Bành trướng đa kênh (TikTok, YT, Meta) không
                     phụ thuộc Amazon.</p>
             </div>
             <div style="margin-bottom: 24px;">
-                <h4 style="color: var(--primary);">3. ROI tiềm năng?</h4>
-                <p><strong>Cực lớn (Tiết kiệm OPEX).</strong> Giảm 90% chi phí sản xuất luồng live so với thuê team
-                    24/7.</p>
+                <h4 style="color: var(--primary);">Tối ưu chi phí</h4>
+                <p><strong>Đáng kể.</strong>Sẽ rất tối ưu nếu kết hợp với HUMAN HOST</p>
             </div>
             <div style="margin-bottom: 24px;">
-                <h4 style="color: var(--primary);">4. Biggest opportunity?</h4>
-                <p><strong>Chiếm lĩnh "Off-peak hours".</strong> Lấy traffic thụ động liên tục 24/7 mà đối thủ không
-                    gánh nổi.</p>
+                <h4 style="color: var(--primary);">Biggest opportunity?</h4>
+                <p><strong>Chiếm lĩnh "Off-peak hours".</strong> Tăng độ phủ , lấy traffic thụ động liên tục 24/7</p>
             </div>
             <div style="margin-bottom: 24px;">
-                <h4 class="text-red-bold">5. Biggest risk (Rủi ro lớn nhất)?</h4>
+                <h4 class="text-red-bold">Biggest risk (Rủi ro lớn nhất)?</h4>
                 <p><strong>Mìn nổ chậm chính sách.</strong> Amazon Agent Policy & TikTok Unoriginal content có thể khóa
                     tài khoản vĩnh viễn nếu thiết lập sai. Rủi ro kiện tụng Product Liability.</p>
             </div>
             <div style="margin-bottom: 24px;">
-                <h4 style="color: var(--primary);">6. Có hợp US market không?</h4>
+                <h4 style="color: var(--primary);"> Có hợp US market không?</h4>
                 <p><strong>Có, nhưng CẦN MINH BẠCH.</strong> 75% mất niềm tin nếu giấu giếm. Khai báo rõ "Trợ lý ảo
                     24/7" bảo vệ Brand Trust.</p>
             </div>
             <div style="margin-bottom: 24px;">
-                <h4 style="color: var(--primary);">7. Có hợp outdoor lifestyle không?</h4>
-                <p><strong>Rất kén.</strong> Yêu cầu vật lý bụi bặm. Phải dùng video người thật làm nội dung chủ đạo, AI
-                    chỉ làm MC góc màn hình.</p>
-            </div>
-            <div style="margin-bottom: 24px;">
-                <h4 style="color: var(--primary);">8. Nên dùng ở đâu?</h4>
-                <p>FAQ tự động, đọc mã giảm giá, trực ca đêm, phát lại video B-roll.</p>
-            </div>
-            <div style="margin-bottom: 24px;">
-                <h4 class="text-red-bold">9. Không nên dùng ở đâu?</h4>
-                <p><strong class="text-red-bold">TUYỆT ĐỐI KHÔNG</strong> giả mạo lắp ráp thực tế hay độ chịu lực. Gây
-                    ấn tượng scam lập tức.</p>
+                <h4 style="color: var(--primary);">Có hợp với ngành hàng Furniture hiện tại không?</h4>
+                <p><strong>Rất kén.</strong> Yêu cầu vật lý bụi bặm. Phải dùng video người thật làm nội dung chủ đạo.</p>
             </div>
             <div class="quote-block">
-                <h4>10. Lời khuyên cuối:</h4>
+                <h4>KẾT LUẬN</h4>
                 <p>Megsu <strong>xem xét sử dụng ANY LIVE</strong>, nhưng với tư duy: <em>"Dùng AI làm việc máy móc
                         (trực
                         đêm, FAQ), con người làm việc của con người (truyền cảm hứng, nằm võng, cảm xúc)"</em>. Gắn nhãn
@@ -1173,67 +1657,352 @@
         </div>
     </div>
 
-    <footer>
-        <p>AI Livestream Strategy Proposal © 2026</p>
-    </footer>
+    <!-- FUNNEL (Scrollytelling Sticky) -->
+    <!-- TEAM SKILLS: NĂNG LỰC CHUYÊN MÔN VÀ KỸ NĂNG TEAM -->
+    <section id="team-skills" class="skills-section" aria-label="Năng lực chuyên môn và kỹ năng Team">
+        <div class="skills-header">
+            <h2 style="margin:0;">NĂNG LỰC CHUYÊN MÔN VÀ KỸ NĂNG TEAM</h2>
+            <p style="color:var(--text-muted); margin-top:8px;">Mỗi khung ô là một kỹ năng — kéo ngang mượt mà để duyệt</p>
+        </div>
+
+        <div class="skills-track-wrap">
+            <div class="skills-nav" aria-hidden="true">
+                <div class="skills-arrow" id="skills-prev">◀</div>
+                <div class="skills-arrow" id="skills-next">▶</div>
+            </div>
+
+            <div class="skills-track" id="skills-track">
+                <div class="skill-card">
+                    <div class="skill-media">
+                        <span class="skill-tag">Content</span>
+                    </div>
+                    <div class="skill-title">Chuẩn bị Content (Content Conceptualization & Scriptwriting)</div>
+                    <div class="skill-desc">Nghiên cứu insight khách hàng, lên ý tưởng, viết kịch bản chi tiết (storyboard, hook, CTA) cho cả video ngắn và kịch bản khung Livestream.</div>
+                </div>
+
+                <div class="skill-card">
+                    <div class="skill-media"><span class="skill-tag">Production</span></div>
+                    <div class="skill-title">Quay Video (Video Production)</div>
+                    <div class="skill-desc">Setup bối cảnh, ánh sáng, góc máy, âm thanh và quay. Chuyển hoá ý tưởng thành tư liệu thô chất lượng cao, đồng bộ hình ảnh giữa video ngắn và phiên live.</div>
+                </div>
+
+                <div class="skill-card">
+                    <div class="skill-media"><span class="skill-tag">Edit</span></div>
+                    <div class="skill-title">Edit Video (Video Post-Production)</div>
+                    <div class="skill-desc">Hậu kỳ: cắt, chèn hiệu ứng, text overlay, nhạc xu hướng và tối ưu hoá định dạng theo thuật toán từng nền tảng.</div>
+                </div>
+
+                <div class="skill-card">
+                    <div class="skill-media"><span class="skill-tag">Livestream</span></div>
+                    <div class="skill-title">Livestream (Live Commerce Operation)</div>
+                    <div class="skill-desc">Điều phối phiên Live: kỹ thuật, ghim sản phẩm, tung hời, quản lý năng lượng và tương tác để kích thích impulse buying.</div>
+                </div>
+
+                <div class="skill-card">
+                    <div class="skill-media"><span class="skill-tag">Host</span></div>
+                    <div class="skill-title">Host / Đại sứ thương hiệu</div>
+                    <div class="skill-desc">Đại diện công ty trên live: chịu trách nhiệm về hình ảnh, uy tín và phát ngôn trước khán giả thời gian thực.</div>
+                </div>
+
+                <div class="skill-card">
+                    <div class="skill-media"><span class="skill-tag">R&D</span></div>
+                    <div class="skill-title">Tìm hiểu nền tảng Livestream mới (New Platform R&D)</div>
+                    <div class="skill-desc">Nghiên cứu thuật toán, chính sách, tệp khách hàng và công cụ bổ trợ; phủ sóng hình ảnh Host lên nền tảng mới sớm nhất.</div>
+                </div>
+
+                <div class="skill-card">
+                    <div class="skill-media"><span class="skill-tag">AI</span></div>
+                    <div class="skill-title">AI & Automation Integration</div>
+                    <div class="skill-desc">Cấu hình AI (digital human, real-time translate, auto-scripts, auto-comments) để chạy livestream bán tự động/đa kênh, clone Host làm Host AI riêng.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+<!-- PLATFORM LOGIC SECTION (NEW) -->
+        <section class="matrix-section" id="platform-logic" aria-label="Platform Logic">
+            <div class="container">
+                <div class="matrix-card">
+                    <h2 style="margin:0 0 12px 0;">CÔNG VIỆC ĐANG THỰC HIỆN</h2>
+                    <p style="color:var(--text-muted); margin-bottom:18px;">Tóm tắt logic hoạt động & hành động đề xuất cho từng nền tảng (dễ scan, đẹp và mượt).</p>
+                    <div class="matrix-table">
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Platform</th>
+                                        <th>Core Actions</th>
+                                        <th>Notes / Links</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>TikTok</strong></td>
+                                        <td>Livestream<br>Đăng video gắn giỏ hàng</td>
+                                        <td>Prioritize short-form driven funnels — tập trung creatives, frequent drops.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Facebook / Instagram</strong></td>
+                                        <td>Livestream<br>Đăng Reels<br>→ gắn link Shopify</td>
+                                        <td>Use Reels for discovery; shop tags push to Shopify store for owned conversion.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>YouTube</strong></td>
+                                        <td>Livestream<br>Đăng Reels<br>→ gắn link Shopify</td>
+                                        <td>Long-form + SEO. Archive livestreams as shoppable videos; enable YT shopping where possible.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Amazon</strong></td>
+                                        <td>Livestream</td>
+                                        <td>Focus on intent & conversion. Sync inventory via AnyX; ensure BSA compliance and disclosure.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div style="margin-top:18px; display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+                        <a class="thanks-cta" href="#platforms-summary">Xem chi tiết nền tảng</a>
+                        <div style="color:var(--text-muted); font-size:0.98rem;">Mẹo: Sắp xếp nội dung livestream theo dạng "Hook → Demo → CTA" cho conversion tối ưu.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    <section class="funnel-sec" id="funnel-trigger">
+        <div class="funnel-sticky">
+            <div style="text-align: center; margin-bottom: 20px; z-index: 20;" class="funnel-title">
+                <h2 style="margin: 0;">SOCIAL COMMERCE FUNNEL</h2>
+            </div>
+            <div class="funnel-stage">
+                <div class="node-center">SHOPIFY</div>
+                <div class="node-platform n-amz">Amazon Live</div>
+                <div class="node-platform n-tt">TikTok</div>
+                <div class="node-platform n-fb">Facebook</div>
+                <div class="node-platform n-ig">Instagram</div>
+                <div class="node-platform n-yt">YouTube</div>
+            </div>
+            <div class="funnel-title" style="margin-top: 40px; text-align: center; max-width: 600px; z-index: 20;">
+                <p>Social platforms = traffic engine<br>Livestream + Ads = công cụ kéo khách<br>Shopify = hệ thống bán
+                    hàng trung tâm, nơi chốt đơn cuối cùng.</p>
+            </div>
+        </div>
+    </section>
+
+
 
     <script>
-        gsap.registerPlugin(ScrollTrigger);
+        (function(){
+            // Enhanced drag-to-scroll with momentum + nav buttons
+            const track = document.getElementById('skills-track');
+            if(!track) return;
 
-        // HERO
-        gsap.to(".hero h1, .hero p, .hero-tag", {
-            y: -50, opacity: 0,
-            scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
-        });
+            let isDown = false, startX = 0, scrollLeft = 0;
+            let positions = []; // store recent pointer positions for velocity
+            const maxPositions = 5;
+            track.style.scrollBehavior = 'smooth';
 
-        // FUNNEL
-        const funnelTimeline = gsap.timeline({
-            scrollTrigger: { trigger: "#funnel-trigger", start: "top top", end: "bottom bottom", scrub: 1 }
-        });
+            track.addEventListener('pointerdown', (e) => {
+                isDown = true;
+                track.setPointerCapture(e.pointerId);
+                track.classList.add('dragging');
+                startX = e.pageX - track.offsetLeft;
+                scrollLeft = track.scrollLeft;
+                positions = [{ x: e.pageX, t: Date.now() }];
+            });
 
-        funnelTimeline.to(".funnel-title", { opacity: 1, y: 0, duration: 1 })
-            .to(".node-center", { scale: 1, duration: 2, ease: "back.out(1.7)" })
-            .to(".node-platform", { opacity: 1, duration: 2, stagger: 0.5 });
+            track.addEventListener('pointermove', (e) => {
+                if(!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - track.offsetLeft;
+                const walk = (x - startX) * 1.6;
+                track.scrollLeft = scrollLeft - walk;
 
-        const stage = document.querySelector('.funnel-stage');
-        const platforms = document.querySelectorAll('.node-platform');
+                positions.push({ x: e.pageX, t: Date.now() });
+                if (positions.length > maxPositions) positions.shift();
+            });
 
-        platforms.forEach(p => {
-            const particle = document.createElement('div');
-            particle.className = 'traffic-particle';
-            stage.appendChild(particle);
+            function applyMomentum() {
+                if (positions.length < 2) return;
+                const last = positions[positions.length - 1];
+                const first = positions[0];
+                const dx = last.x - first.x;
+                const dt = Math.max(1, last.t - first.t);
+                const velocity = dx / dt; // px per ms
 
-            let startX, startY;
-            if (p.classList.contains('n-amz')) { startX = '15%'; startY = '10%'; }
-            if (p.classList.contains('n-tt')) { startX = '85%'; startY = '10%'; }
-            if (p.classList.contains('n-fb')) { startX = '0%'; startY = '50%'; }
-            if (p.classList.contains('n-ig')) { startX = '100%'; startY = '50%'; }
-            if (p.classList.contains('n-yt')) { startX = '50%'; startY = '90%'; }
+                // convert to px per frame scale and animate with decay
+                let v = velocity * 18; // tuned multiplier for feel
+                const decay = 0.92;
 
-            gsap.set(particle, { left: startX, top: startY });
+                function step() {
+                    v *= decay;
+                    if (Math.abs(v) < 0.5) return;
+                    track.scrollLeft -= v;
+                    requestAnimationFrame(step);
+                }
+                requestAnimationFrame(step);
+            }
 
-            funnelTimeline.to(particle, { opacity: 1, left: '50%', top: '50%', duration: 3, ease: "power2.in" }, "<+=1");
-        });
+            function endDrag(e) {
+                isDown = false;
+                try{ track.releasePointerCapture(e.pointerId); } catch(e){}
+                track.classList.remove('dragging');
+                applyMomentum();
+            }
 
-        // HORIZONTAL SCROLL
-        const hWrap = document.getElementById('h-wrap');
-        function getScrollAmount() { return -(hWrap.scrollWidth - window.innerWidth + 100); }
+            track.addEventListener('pointerup', endDrag);
+            track.addEventListener('pointercancel', (e)=> { if(isDown) endDrag(e); });
+            track.addEventListener('pointerleave', (e) => { if(isDown) endDrag(e); });
 
-        const tween = gsap.to(hWrap, { x: getScrollAmount, ease: "none" });
+            // keyboard accessibility: arrows
+            track.tabIndex = 0;
+            track.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') { e.preventDefault(); track.scrollBy({ left: 320, behavior: 'smooth' }); }
+                if (e.key === 'ArrowLeft') { e.preventDefault(); track.scrollBy({ left: -320, behavior: 'smooth' }); }
+            });
 
-        ScrollTrigger.create({
-            trigger: "#platforms-trigger", start: "top top", end: () => `+=${getScrollAmount() * -1}`,
-            pin: ".h-sticky", animation: tween, scrub: 1, invalidateOnRefresh: true
-        });
+            // nav buttons
+            const prev = document.getElementById('skills-prev');
+            const next = document.getElementById('skills-next');
+            if (prev) prev.addEventListener('click', () => track.scrollBy({ left: -320, behavior: 'smooth' }));
+            if (next) next.addEventListener('click', () => track.scrollBy({ left: 320, behavior: 'smooth' }));
+        })();
+    </script>
 
-        // FADE UP
-        const fadeUps = document.querySelectorAll('.fade-up');
-        fadeUps.forEach(elem => {
-            gsap.fromTo(elem,
-                { opacity: 0, y: 50 },
-                { opacity: 1, y: 0, duration: 0.8, scrollTrigger: { trigger: elem, start: "top 85%", toggleActions: "play none none reverse" } }
-            );
-        });
+   
+    <!-- THANK YOU / CLOSING SECTION -->
+    <section class="thanks-section fade-up" aria-label="Cảm ơn"> 
+        <div class="thanks-bg" aria-hidden="true"></div>
+        <div class="thanks-overlay" aria-hidden="true"></div>
+        <div class="thanks-particle p1" aria-hidden="true"></div>
+        <div class="thanks-particle p2" aria-hidden="true"></div>
+        <div class="thanks-particle p3" aria-hidden="true"></div>
+        <div class="thanks-content">
+            <h2>THANK YOU </h2>
+    
+        </div>
+    </section>
+
+    <script>
+        (function(){
+            try {
+                if(typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+                gsap.registerPlugin(ScrollTrigger);
+
+                // HERO
+                gsap.to(".hero h1, .hero p, .hero-tag", {
+                    y: -50, opacity: 0,
+                    scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true }
+                });
+
+                // FUNNEL
+                const funnelTimeline = gsap.timeline({
+                    scrollTrigger: { trigger: "#funnel-trigger", start: "top top", end: "bottom bottom", scrub: 1 }
+                });
+
+                funnelTimeline.to(".funnel-title", { opacity: 1, y: 0, duration: 1 })
+                    .to(".node-center", { scale: 1, duration: 2, ease: "back.out(1.7)" })
+                    .to(".node-platform", { opacity: 1, duration: 2, stagger: 0.5 });
+
+                const stage = document.querySelector('.funnel-stage');
+                const platforms = document.querySelectorAll('.node-platform');
+
+                platforms.forEach(p => {
+                    const particle = document.createElement('div');
+                    particle.className = 'traffic-particle';
+                    if(stage) stage.appendChild(particle);
+
+                    let startX, startY;
+                    if (p.classList.contains('n-amz')) { startX = '15%'; startY = '10%'; }
+                    if (p.classList.contains('n-tt')) { startX = '85%'; startY = '10%'; }
+                    if (p.classList.contains('n-fb')) { startX = '0%'; startY = '50%'; }
+                    if (p.classList.contains('n-ig')) { startX = '100%'; startY = '50%'; }
+                    if (p.classList.contains('n-yt')) { startX = '50%'; startY = '90%'; }
+
+                    gsap.set(particle, { left: startX, top: startY });
+
+                    funnelTimeline.to(particle, { opacity: 1, left: '50%', top: '50%', duration: 3, ease: "power2.in" }, "<+=1");
+                });
+
+                // HORIZONTAL SCROLL (guarded) — only run when element exists
+                (function(){
+                    const hWrap = document.getElementById('h-wrap');
+                    if(!hWrap) return;
+                    function getScrollAmount() { return -(hWrap.scrollWidth - window.innerWidth + 100); }
+
+                    const tween = gsap.to(hWrap, { x: getScrollAmount, ease: "none" });
+
+                    ScrollTrigger.create({
+                        trigger: "#platforms-trigger", start: "top top", end: () => `+=${getScrollAmount() * -1}`,
+                        pin: ".h-sticky", animation: tween, scrub: 1, invalidateOnRefresh: true
+                    });
+                })();
+
+                // Interactive platforms summary: search, expand, reveal animation
+                (function(){
+                    const search = document.getElementById('platform-search');
+                    const table = document.getElementById('platforms-table');
+                    if(!search || !table) return;
+
+                    const rows = Array.from(table.querySelectorAll('tbody tr.data-row'));
+
+                    search.addEventListener('input', (e)=>{
+                        const q = e.target.value.trim().toLowerCase();
+                        rows.forEach(r => {
+                            const txt = r.innerText.toLowerCase();
+                            const show = txt.indexOf(q) !== -1;
+                            r.style.display = show ? '' : 'none';
+                            const details = r.nextElementSibling;
+                            if(details && details.classList.contains('row-details')){
+                                details.style.display = show && r.classList.contains('expanded') ? '' : 'none';
+                            }
+                        });
+                    });
+
+                    // Toggle expand on click
+                    rows.forEach(r => {
+                        r.addEventListener('click', ()=>{
+                            const details = r.nextElementSibling;
+                            const isExpanded = r.classList.toggle('expanded');
+                            if(details && details.classList.contains('row-details')){
+                                details.style.display = isExpanded ? '' : 'none';
+                            }
+                        });
+                    });
+
+                    // GSAP reveal for rows
+                    gsap.fromTo(rows,
+                        { y: 20, opacity: 0 },
+                        { y: 0, opacity: 1, duration: 0.6, stagger: 0.06,
+                          scrollTrigger: { trigger: '#platforms-summary', start: 'top 80%', toggleActions: 'play none none reverse' }
+                        }
+                    );
+                })();
+
+                // Matrix reveal
+                gsap.fromTo('#matrix-comparison .matrix-card', { y: 30, opacity: 0 }, { y:0, opacity:1, duration: 0.8, scrollTrigger: { trigger: '#matrix-comparison', start: 'top 85%', toggleActions: 'play none none reverse' } });
+                // Additional matrix reveal
+                gsap.fromTo('#matrix-comparison-2 .matrix-card', { y: 30, opacity: 0 }, { y:0, opacity:1, duration: 0.8, scrollTrigger: { trigger: '#matrix-comparison-2', start: 'top 85%', toggleActions: 'play none none reverse' } });
+
+                // FADE UP
+                const fadeUps = document.querySelectorAll('.fade-up');
+                fadeUps.forEach(elem => {
+                    gsap.fromTo(elem,
+                        { opacity: 0, y: 50 },
+                        { opacity: 1, y: 0, duration: 0.8, scrollTrigger: { trigger: elem, start: "top 85%", toggleActions: "play none none reverse" } }
+                    );
+                });
+                // Parallax subtle movement for thanks background
+                const thanksBg = document.querySelector('.thanks-bg');
+                if(thanksBg) {
+                    gsap.to(thanksBg, {
+                        yPercent: -12,
+                        ease: 'none',
+                        scrollTrigger: { trigger: '.thanks-section', start: 'top bottom', end: 'bottom top', scrub: 0.8 }
+                    });
+                }
+            } catch (err) {
+                console.error('Animation init error:', err);
+            }
+        })();
     </script>
 </body>
 
